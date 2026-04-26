@@ -1,0 +1,421 @@
+{% extends "layout.html" %}
+
+{% block title %}OtoNova | Akıllı Araç Alım Satım Platformu{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section class="hero-section">
+  <div class="container position-relative" style="z-index:2">
+    <div class="row justify-content-center text-center">
+      <div class="col-lg-9 col-xl-8">
+
+        <span class="badge rounded-pill mb-4 px-3 py-2"
+              style="background:rgba(37,99,235,.15);color:#93c5fd;border:1px solid rgba(37,99,235,.3);font-size:.75rem;font-weight:600;letter-spacing:1px">
+          <i class="bi bi-cpu me-1"></i> AI DESTEKLI PLATFORM
+        </span>
+
+        <h1 class="text-white fw-black mb-4"
+            style="font-size:clamp(2rem,5vw,3.6rem);letter-spacing:-1.5px;line-height:1.1">
+          Hayalinizdeki Arabayı<br>
+          <span style="background:linear-gradient(90deg,#60a5fa,#a78bfa);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">
+            Bugün Bulun
+          </span>
+        </h1>
+
+        <p class="mb-5" style="font-size:1.05rem;color:rgba(255,255,255,.65);max-width:540px;margin:0 auto 2rem">
+          Binlerce ilan arasından size en uygun aracı kolayca bulun, AI ile fiyat analizi yapın ve güvenle satın alın.
+        </p>
+
+        <div class="d-flex justify-content-center gap-3 mb-5 flex-wrap">
+          <a href="{% url 'arabalar' %}" class="btn-primary-p" style="padding:.85rem 2rem;font-size:.95rem">
+            <i class="bi bi-search"></i> Araç Ara
+          </a>
+          <a href="{% url 'tahmin' %}" class="btn-outline-p" style="padding:.8rem 2rem;font-size:.95rem;border-color:rgba(255,255,255,.25);color:#fff">
+            <i class="bi bi-cpu"></i> Fiyat Tahmini Yap
+          </a>
+        </div>
+
+        <!-- Stats strip -->
+        <div class="d-flex justify-content-center gap-4 flex-wrap" style="color:rgba(255,255,255,.5);font-size:.82rem">
+          <span><strong style="color:#fff">50.000+</strong> Aktif İlan</span>
+          <span style="opacity:.4">|</span>
+          <span><strong style="color:#fff">%98</strong> Güvenli İşlem</span>
+          <span style="opacity:.4">|</span>
+          <span><strong style="color:#fff">AI</strong> Destekli Fiyat</span>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SEARCH BAR ═══════════════════════════ -->
+<section class="bg-white py-0">
+  <div class="container" style="margin-top:-40px;position:relative;z-index:10">
+    <form action="{% url 'arabalar' %}" method="get" class="search-bar">
+      <div class="d-flex align-items-center gap-2 flex-wrap flex-lg-nowrap">
+
+        <div class="search-field flex-grow-1" style="min-width:120px">
+          <span class="search-field-label">Marka</span>
+          <input type="text" name="marka" placeholder="Tüm markalar" class="search-field input">
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:120px">
+          <span class="search-field-label">Model</span>
+          <input type="text" name="model" placeholder="Tüm modeller">
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:130px">
+          <span class="search-field-label">Fiyat Aralığı</span>
+          <select name="fiyat">
+            <option value="">Tümü</option>
+            <option>0 – 500.000 TL</option>
+            <option>500.000 – 1M TL</option>
+            <option>1M+ TL</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:110px">
+          <span class="search-field-label">Şehir</span>
+          <select name="sehir">
+            <option value="">Tümü</option>
+            <option>İstanbul</option><option>Ankara</option><option>İzmir</option>
+            <option>Bursa</option><option>Antalya</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:90px">
+          <span class="search-field-label">Yıl</span>
+          <select name="yil">
+            <option value="">Tümü</option>
+            <option>2024</option><option>2023</option><option>2022</option>
+            <option>2021</option><option>2020</option><option>2019</option><option>2018 ve öncesi</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:100px">
+          <span class="search-field-label">Kilometre</span>
+          <select name="km">
+            <option value="">Tümü</option>
+            <option>0 – 50.000</option><option>50.000 – 150.000</option><option>150.000+</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:100px">
+          <span class="search-field-label">Vites</span>
+          <select name="vites">
+            <option value="">Tümü</option>
+            <option>Otomatik</option><option>Manuel</option><option>Yarı Otomatik</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:100px">
+          <span class="search-field-label">Yakıt</span>
+          <select name="yakit">
+            <option value="">Tümü</option>
+            <option>Benzin</option><option>Dizel</option><option>Elektrikli</option><option>Hibrit</option>
+          </select>
+        </div>
+
+        <div class="flex-shrink-0 ms-lg-2 w-100 w-lg-auto mt-2 mt-lg-0">
+          <button type="submit" class="btn-primary-p w-100 justify-content-center" style="padding:.85rem 1.75rem;border-radius:10px">
+            <i class="bi bi-search"></i> Ara
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ TRUST SECTION ═══════════════════════════ -->
+<section class="py-5" style="background:var(--gray-50)">
+  <div class="container py-3">
+    <div class="row g-4">
+
+      <div class="col-6 col-lg-3">
+        <div class="trust-card">
+          <div class="trust-icon"><i class="bi bi-car-front-fill"></i></div>
+          <div class="trust-num">50.000+</div>
+          <div class="trust-label">Aktif İlan</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="trust-card">
+          <div class="trust-icon"><i class="bi bi-people-fill"></i></div>
+          <div class="trust-num">12.000+</div>
+          <div class="trust-label">Mutlu Kullanıcı</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="trust-card">
+          <div class="trust-icon"><i class="bi bi-cpu-fill"></i></div>
+          <div class="trust-num">AI</div>
+          <div class="trust-label">Destekli Fiyat Analizi</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="trust-card">
+          <div class="trust-icon"><i class="bi bi-shield-check-fill"></i></div>
+          <div class="trust-num">%98</div>
+          <div class="trust-label">Güvenli İşlem Oranı</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FEATURED CARS ═══════════════════════════ -->
+<section class="py-5 py-lg-6 bg-white">
+  <div class="container py-2">
+
+    <div class="d-flex align-items-end justify-content-between mb-5 flex-wrap gap-3">
+      <div>
+        <div class="section-label">ARAÇLAR</div>
+        <div class="section-title">Öne Çıkan Araçlar</div>
+        <p class="section-sub">Güvenilir satıcılardan seçilmiş, AI ile fiyat doğrulanmış ilanlar.</p>
+      </div>
+      <a href="{% url 'arabalar' %}" class="btn-outline-p flex-shrink-0">
+        Tümünü Gör <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+
+      <!-- Kart 1 -->
+      <div class="col-sm-6 col-xl-3">
+        <div class="car-card">
+          <div class="car-img-wrap">
+            <img src="https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=600"
+                 alt="BMW 5 Serisi" class="car-img">
+            <div class="car-badge-wrap">
+              <span class="car-badge car-badge-blue">Öne Çıkan</span>
+            </div>
+            <button class="car-fav" title="Favorilere Ekle"><i class="bi bi-heart"></i></button>
+          </div>
+          <div class="car-body">
+            <div class="car-title">BMW 5 Serisi 520i</div>
+            <div class="car-meta">2021 &nbsp;·&nbsp; Benzin &nbsp;·&nbsp; Otomatik &nbsp;·&nbsp; 38.000 km</div>
+            <div class="d-flex align-items-center flex-wrap gap-1">
+              <span class="car-price">1.850.000 TL</span>
+              <span class="car-ai-score"><i class="bi bi-cpu"></i> Piyasa Değerinde</span>
+            </div>
+            <div class="d-flex align-items-center mt-2 gap-1">
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-half text-warning" style="font-size:.7rem"></i>
+              <span style="font-size:.72rem;color:var(--gray-400);margin-left:4px">4.5 · Güvenilir Satıcı</span>
+            </div>
+          </div>
+          <div class="car-footer">
+            <a href="#" class="btn-card-primary">Detayları Gör</a>
+            <button class="btn-card-ghost"><i class="bi bi-arrow-left-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kart 2 -->
+      <div class="col-sm-6 col-xl-3">
+        <div class="car-card">
+          <div class="car-img-wrap">
+            <img src="https://images.pexels.com/photos/3729464/pexels-photo-3729464.jpeg?auto=compress&cs=tinysrgb&w=600"
+                 alt="Mercedes C200" class="car-img">
+            <div class="car-badge-wrap">
+              <span class="car-badge car-badge-green">Yeni İlan</span>
+            </div>
+            <button class="car-fav"><i class="bi bi-heart"></i></button>
+          </div>
+          <div class="car-body">
+            <div class="car-title">Mercedes-Benz C200</div>
+            <div class="car-meta">2022 &nbsp;·&nbsp; Benzin &nbsp;·&nbsp; Otomatik &nbsp;·&nbsp; 22.000 km</div>
+            <div class="d-flex align-items-center flex-wrap gap-1">
+              <span class="car-price">2.350.000 TL</span>
+              <span class="car-ai-score"><i class="bi bi-cpu"></i> İyi Fiyat</span>
+            </div>
+            <div class="d-flex align-items-center mt-2 gap-1">
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <span style="font-size:.72rem;color:var(--gray-400);margin-left:4px">5.0 · Süper Satıcı</span>
+            </div>
+          </div>
+          <div class="car-footer">
+            <a href="#" class="btn-card-primary">Detayları Gör</a>
+            <button class="btn-card-ghost"><i class="bi bi-arrow-left-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kart 3 -->
+      <div class="col-sm-6 col-xl-3">
+        <div class="car-card">
+          <div class="car-img-wrap">
+            <img src="https://images.pexels.com/photos/1545743/pexels-photo-1545743.jpeg?auto=compress&cs=tinysrgb&w=600"
+                 alt="Audi A6" class="car-img">
+            <div class="car-badge-wrap">
+              <span class="car-badge car-badge-blue">Öne Çıkan</span>
+            </div>
+            <button class="car-fav"><i class="bi bi-heart"></i></button>
+          </div>
+          <div class="car-body">
+            <div class="car-title">Audi A6 2.0 TDI</div>
+            <div class="car-meta">2020 &nbsp;·&nbsp; Dizel &nbsp;·&nbsp; Otomatik &nbsp;·&nbsp; 62.000 km</div>
+            <div class="d-flex align-items-center flex-wrap gap-1">
+              <span class="car-price">1.650.000 TL</span>
+              <span class="car-ai-score"><i class="bi bi-cpu"></i> Piyasa Değerinde</span>
+            </div>
+            <div class="d-flex align-items-center mt-2 gap-1">
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star text-warning" style="font-size:.7rem"></i>
+              <span style="font-size:.72rem;color:var(--gray-400);margin-left:4px">4.0 · Güvenilir Satıcı</span>
+            </div>
+          </div>
+          <div class="car-footer">
+            <a href="#" class="btn-card-primary">Detayları Gör</a>
+            <button class="btn-card-ghost"><i class="bi bi-arrow-left-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Kart 4 -->
+      <div class="col-sm-6 col-xl-3">
+        <div class="car-card">
+          <div class="car-img-wrap">
+            <img src="https://images.pexels.com/photos/1164778/pexels-photo-1164778.jpeg?auto=compress&cs=tinysrgb&w=600"
+                 alt="Volkswagen Passat" class="car-img">
+            <div class="car-badge-wrap">
+              <span class="car-badge car-badge-green">Yeni İlan</span>
+            </div>
+            <button class="car-fav"><i class="bi bi-heart"></i></button>
+          </div>
+          <div class="car-body">
+            <div class="car-title">Volkswagen Passat 1.6</div>
+            <div class="car-meta">2019 &nbsp;·&nbsp; Dizel &nbsp;·&nbsp; Otomatik &nbsp;·&nbsp; 85.000 km</div>
+            <div class="d-flex align-items-center flex-wrap gap-1">
+              <span class="car-price">1.120.000 TL</span>
+              <span class="car-ai-score" style="color:#d97706;background:#fffbeb;border-color:#fde68a">
+                <i class="bi bi-cpu"></i> Yüksek Fiyat
+              </span>
+            </div>
+            <div class="d-flex align-items-center mt-2 gap-1">
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-fill text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star-half text-warning" style="font-size:.7rem"></i>
+              <i class="bi bi-star text-warning" style="font-size:.7rem"></i>
+              <span style="font-size:.72rem;color:var(--gray-400);margin-left:4px">3.5 · Bireysel Satıcı</span>
+            </div>
+          </div>
+          <div class="car-footer">
+            <a href="#" class="btn-card-primary">Detayları Gör</a>
+            <button class="btn-card-ghost"><i class="bi bi-arrow-left-right"></i></button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ AI SECTION ═══════════════════════════ -->
+<section class="py-5 py-lg-6" style="background:var(--gray-50)">
+  <div class="container py-2">
+    <div class="ai-cta-section">
+      <div class="row align-items-center g-5 position-relative" style="z-index:2">
+
+        <!-- Sol metin -->
+        <div class="col-lg-6">
+          <span class="badge rounded-pill mb-3 px-3 py-2"
+                style="background:rgba(37,99,235,.2);color:#93c5fd;border:1px solid rgba(37,99,235,.3);font-size:.72rem;font-weight:700;letter-spacing:1px">
+            <i class="bi bi-cpu me-1"></i> YAPAY ZEKA
+          </span>
+          <h2 class="text-white fw-black mb-3" style="font-size:clamp(1.5rem,3vw,2.1rem);letter-spacing:-.5px;line-height:1.2">
+            Aracınızın Gerçek<br>Değerini Öğrenin
+          </h2>
+          <p style="color:rgba(255,255,255,.6);font-size:.95rem;line-height:1.7;max-width:420px">
+            Random Forest modelimiz binlerce gerçek satış verisini analiz ederek saniyeler içinde piyasa fiyat tahmini üretir.
+          </p>
+          <div class="d-flex gap-4 mt-4 flex-wrap">
+            <div>
+              <div style="color:#fff;font-size:1.4rem;font-weight:800">%96</div>
+              <div style="color:rgba(255,255,255,.5);font-size:.78rem">Model Doğruluğu</div>
+            </div>
+            <div>
+              <div style="color:#fff;font-size:1.4rem;font-weight:800">&lt;2sn</div>
+              <div style="color:rgba(255,255,255,.5);font-size:.78rem">Tahmin Süresi</div>
+            </div>
+            <div>
+              <div style="color:#fff;font-size:1.4rem;font-weight:800">500K+</div>
+              <div style="color:rgba(255,255,255,.5);font-size:.78rem">Eğitim Verisi</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Sağ form -->
+        <div class="col-lg-6">
+          <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:16px;padding:2rem">
+            <p class="text-white fw-semibold mb-4" style="font-size:.9rem">Hızlı Fiyat Tahmini</p>
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label style="color:rgba(255,255,255,.5);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Marka</label>
+                <div class="ai-input-group">
+                  <select style="border-radius:10px">
+                    <option value="">Seçin...</option>
+                    <option>BMW</option><option>Mercedes</option><option>Audi</option>
+                    <option>Toyota</option><option>Volkswagen</option><option>Renault</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-6">
+                <label style="color:rgba(255,255,255,.5);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Model</label>
+                <div class="ai-input-group">
+                  <input type="text" placeholder="Örn: 320i">
+                </div>
+              </div>
+              <div class="col-6">
+                <label style="color:rgba(255,255,255,.5);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Yıl</label>
+                <div class="ai-input-group">
+                  <select style="border-radius:10px">
+                    <option>2024</option><option>2023</option><option>2022</option>
+                    <option>2021</option><option>2020</option><option>2019</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-6">
+                <label style="color:rgba(255,255,255,.5);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Kilometre</label>
+                <div class="ai-input-group">
+                  <input type="number" placeholder="Örn: 75000">
+                </div>
+              </div>
+            </div>
+            <a href="{% url 'tahmin' %}" class="btn-primary-p w-100 justify-content-center"
+               style="padding:.9rem;border-radius:10px;font-size:.9rem">
+              <i class="bi bi-cpu"></i> AI ile Tahmin Et
+            </a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

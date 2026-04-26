@@ -1,0 +1,60 @@
+# ── Python ───────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+
+# ── Sanal ortam ───────────────────────────────────────
+venv/
+.venv/
+env/
+.env/
+ENV/
+
+# ── Ortam değişkenleri / gizli ayarlar ───────────────
+.env
+.env.*
+*.env
+local_settings.py
+
+# ── Django ────────────────────────────────────────────
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+static_root/
+
+# ── ML model dosyaları (büyük ikili dosyalar) ─────────
+ml_model/model/*.pkl
+ml_model/model/*.joblib
+
+# ── Jupyter Notebook ──────────────────────────────────
+.ipynb_checkpoints/
+*.ipynb
+
+# ── IDE / Editör ──────────────────────────────────────
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# ── İşletim sistemi ───────────────────────────────────
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# ── Derleme / dağıtım çıktıları ───────────────────────
+dist/
+build/
+*.egg-info/
+*.egg
+.eggs/
+
+# ── Test & kapsama ────────────────────────────────────
+.pytest_cache/
+.coverage
+htmlcov/
+
+# ── Claude Code ───────────────────────────────────────
+.claude/

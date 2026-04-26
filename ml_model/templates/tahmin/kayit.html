@@ -1,0 +1,158 @@
+{% extends "layout.html" %}
+
+{% block title %}Kayıt Ol — OtoNova{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+
+  <!-- Sol — görsel panel -->
+  <div class="auth-left">
+    <div class="position-relative" style="z-index:2">
+      <div class="mb-auto position-absolute top-0 start-0 p-4">
+        <span style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:#fff">
+          <i class="bi bi-car-front-fill text-primary me-2"></i>OtoNova
+        </span>
+      </div>
+      <div>
+        <span class="badge rounded-pill mb-3 px-3 py-2"
+              style="background:rgba(37,99,235,.2);color:#93c5fd;border:1px solid rgba(37,99,235,.3);font-size:.72rem;font-weight:700;letter-spacing:1px">
+          <i class="bi bi-person-plus me-1"></i> ÜCRETSİZ ÜYELİK
+        </span>
+        <h2 class="text-white fw-black mb-3" style="font-size:1.9rem;letter-spacing:-.5px;line-height:1.25">
+          Hemen üye ol,<br>en iyi fırsatları<br>kaçırma
+        </h2>
+        <p style="color:rgba(255,255,255,.55);font-size:.88rem;line-height:1.7;max-width:320px">
+          Ücretsiz hesap açarak ilanları kaydet, fiyat alarmı kur ve satıcılarla kolayca iletişime geç.
+        </p>
+        <ul class="list-unstyled mt-4 mb-0" style="color:rgba(255,255,255,.65);font-size:.85rem">
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Sınırsız ilan kaydetme</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>AI fiyat analizi</li>
+          <li class="mb-2"><i class="bi bi-check-circle-fill text-primary me-2"></i>Fiyat alarmı kurma</li>
+          <li><i class="bi bi-check-circle-fill text-primary me-2"></i>Satıcılarla doğrudan iletişim</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sağ — form -->
+  <div class="auth-right">
+    <div class="auth-card" style="max-width:480px">
+
+      <!-- Başlık -->
+      <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+             style="width:56px;height:56px;background:var(--blue-light)">
+          <i class="bi bi-person-plus-fill" style="font-size:1.4rem;color:var(--blue)"></i>
+        </div>
+        <h1 style="font-size:1.5rem;font-weight:800;color:var(--navy);letter-spacing:-.5px;margin-bottom:4px">
+          Hesap Oluştur
+        </h1>
+        <p style="font-size:.85rem;color:var(--gray-400);margin:0">OtoNova'ya ücretsiz katılın</p>
+      </div>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <!-- Ad & Soyad -->
+        <div class="row g-3 mb-3">
+          <div class="col-6">
+            <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Ad</label>
+            <div class="auth-input-wrap">
+              <input type="text" name="ad" placeholder="Adınız" required autocomplete="given-name">
+            </div>
+          </div>
+          <div class="col-6">
+            <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Soyad</label>
+            <div class="auth-input-wrap">
+              <input type="text" name="soyad" placeholder="Soyadınız" required autocomplete="family-name">
+            </div>
+          </div>
+        </div>
+
+        <!-- E-posta -->
+        <div class="mb-3">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">E-posta Adresi</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon"><i class="bi bi-envelope"></i></span>
+            <input type="email" name="email" placeholder="ornek@mail.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <!-- Telefon -->
+        <div class="mb-3">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">
+            Telefon <span style="font-weight:400;color:var(--gray-400)">(isteğe bağlı)</span>
+          </label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon"><i class="bi bi-telephone"></i></span>
+            <input type="tel" name="telefon" placeholder="05XX XXX XX XX" autocomplete="tel">
+          </div>
+        </div>
+
+        <!-- Şifre -->
+        <div class="mb-3">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Şifre</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon"><i class="bi bi-lock"></i></span>
+            <input type="password" id="pass1" name="password" placeholder="En az 8 karakter" required minlength="8" autocomplete="new-password">
+            <button type="button" class="btn-toggle-pass" onclick="togglePass('pass1',this)">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+          <span style="font-size:.72rem;color:var(--gray-400);margin-top:4px;display:block">
+            En az 8 karakter, bir büyük harf ve bir rakam içermeli.
+          </span>
+        </div>
+
+        <!-- Şifre Tekrar -->
+        <div class="mb-4">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Şifre Tekrar</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon"><i class="bi bi-lock-fill"></i></span>
+            <input type="password" id="pass2" name="password2" placeholder="Şifrenizi tekrar girin" required autocomplete="new-password">
+            <button type="button" class="btn-toggle-pass" onclick="togglePass('pass2',this)">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- KVKK -->
+        <div class="mb-4">
+          <div class="d-flex gap-2 align-items-start">
+            <input type="checkbox" id="kvkk" name="kvkk" class="form-check-input mt-1 flex-shrink-0" required style="width:16px;height:16px">
+            <label for="kvkk" style="font-size:.8rem;color:var(--gray-500);cursor:pointer;line-height:1.5">
+              <a href="#" style="color:var(--blue);text-decoration:none;font-weight:500">KVKK Aydınlatma Metni</a>'ni ve
+              <a href="#" style="color:var(--blue);text-decoration:none;font-weight:500">Kullanım Koşulları</a>'nı okudum, kabul ediyorum.
+            </label>
+          </div>
+        </div>
+
+        <!-- Kayıt Butonu -->
+        <button type="submit" class="btn-primary-p w-100 justify-content-center"
+                style="padding:.85rem;border-radius:var(--radius-sm);font-size:.92rem">
+          <i class="bi bi-person-check"></i> Kayıt Ol
+        </button>
+
+      </form>
+
+      <p class="text-center mt-4 mb-0" style="font-size:.83rem;color:var(--gray-400)">
+        Zaten hesabın var mı?
+        <a href="{% url 'giris' %}" style="color:var(--blue);font-weight:600;text-decoration:none">Giriş Yap</a>
+      </p>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  const ico = btn.querySelector('i');
+  if (inp.type === 'password') { inp.type = 'text'; ico.className = 'bi bi-eye-slash'; }
+  else { inp.type = 'password'; ico.className = 'bi bi-eye'; }
+}
+</script>
+{% endblock %}

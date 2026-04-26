@@ -1,0 +1,143 @@
+{% extends "layout.html" %}
+
+{% block title %}Giriş Yap — OtoNova{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+
+  <!-- Sol — görsel panel -->
+  <div class="auth-left">
+    <div class="position-relative" style="z-index:2">
+      <!-- Logo -->
+      <div class="mb-auto position-absolute top-0 start-0 p-4">
+        <span style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:#fff">
+          <i class="bi bi-car-front-fill text-primary me-2"></i>OtoNova
+        </span>
+      </div>
+      <!-- Alt metin -->
+      <div>
+        <span class="badge rounded-pill mb-3 px-3 py-2"
+              style="background:rgba(37,99,235,.2);color:#93c5fd;border:1px solid rgba(37,99,235,.3);font-size:.72rem;font-weight:700;letter-spacing:1px">
+          <i class="bi bi-shield-check me-1"></i> GÜVENLİ ALIŞVERİŞ
+        </span>
+        <h2 class="text-white fw-black mb-3" style="font-size:1.9rem;letter-spacing:-.5px;line-height:1.25">
+          OtoNova ile<br>güvenli araç<br>alışverişi
+        </h2>
+        <p style="color:rgba(255,255,255,.55);font-size:.88rem;line-height:1.7;max-width:320px">
+          AI destekli fiyat analizi ile doğru fiyatı öğrenin, binlerce güvenilir ilan arasından seçiminizi yapın.
+        </p>
+        <div class="d-flex gap-3 mt-4 flex-wrap">
+          <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:.75rem 1rem">
+            <div style="color:#fff;font-weight:800;font-size:1.1rem">50K+</div>
+            <div style="color:rgba(255,255,255,.45);font-size:.72rem">Aktif İlan</div>
+          </div>
+          <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:.75rem 1rem">
+            <div style="color:#fff;font-weight:800;font-size:1.1rem">%98</div>
+            <div style="color:rgba(255,255,255,.45);font-size:.72rem">Güvenli İşlem</div>
+          </div>
+          <div style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:.75rem 1rem">
+            <div style="color:#fff;font-weight:800;font-size:1.1rem">AI</div>
+            <div style="color:rgba(255,255,255,.45);font-size:.72rem">Fiyat Analizi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sağ — form -->
+  <div class="auth-right">
+    <div class="auth-card">
+
+      <!-- Başlık -->
+      <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+             style="width:56px;height:56px;background:var(--blue-light)">
+          <i class="bi bi-person-fill" style="font-size:1.4rem;color:var(--blue)"></i>
+        </div>
+        <h1 style="font-size:1.5rem;font-weight:800;color:var(--navy);letter-spacing:-.5px;margin-bottom:4px">
+          Tekrar Hoş Geldiniz
+        </h1>
+        <p style="font-size:.85rem;color:var(--gray-400);margin:0">Hesabınıza giriş yapın</p>
+      </div>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        <!-- E-posta -->
+        <div class="mb-3">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">E-posta Adresi</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon"><i class="bi bi-envelope"></i></span>
+            <input type="email" name="email" placeholder="ornek@mail.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <!-- Şifre -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label style="font-size:.8rem;font-weight:600;color:var(--gray-600)">Şifre</label>
+            <a href="#" style="font-size:.78rem;color:var(--blue);text-decoration:none;font-weight:500">Şifremi Unuttum</a>
+          </div>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon"><i class="bi bi-lock"></i></span>
+            <input type="password" id="loginPass" name="password" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="btn-toggle-pass" onclick="togglePass('loginPass',this)">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Beni Hatırla -->
+        <div class="d-flex align-items-center mb-4">
+          <input type="checkbox" id="remember" name="remember" class="form-check-input me-2" style="width:16px;height:16px">
+          <label for="remember" style="font-size:.83rem;color:var(--gray-500);cursor:pointer">Beni hatırla</label>
+        </div>
+
+        <!-- Giriş Butonu -->
+        <button type="submit" class="btn-primary-p w-100 justify-content-center"
+                style="padding:.85rem;border-radius:var(--radius-sm);font-size:.92rem">
+          <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+        </button>
+
+        <!-- Divider -->
+        <div class="d-flex align-items-center gap-3 my-4">
+          <hr class="flex-grow-1 m-0" style="border-color:var(--gray-200)">
+          <span style="font-size:.75rem;color:var(--gray-400);white-space:nowrap">veya</span>
+          <hr class="flex-grow-1 m-0" style="border-color:var(--gray-200)">
+        </div>
+
+        <!-- Google / Apple -->
+        <div class="d-flex gap-2">
+          <button type="button" class="btn-outline-p flex-grow-1 justify-content-center"
+                  style="padding:.7rem;border-radius:var(--radius-sm);font-size:.83rem">
+            <i class="bi bi-google"></i> Google
+          </button>
+          <button type="button" class="btn-outline-p flex-grow-1 justify-content-center"
+                  style="padding:.7rem;border-radius:var(--radius-sm);font-size:.83rem">
+            <i class="bi bi-apple"></i> Apple
+          </button>
+        </div>
+
+      </form>
+
+      <p class="text-center mt-4 mb-0" style="font-size:.83rem;color:var(--gray-400)">
+        Hesabın yok mu?
+        <a href="{% url 'kayit' %}" style="color:var(--blue);font-weight:600;text-decoration:none">Kayıt Ol</a>
+      </p>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function togglePass(id, btn) {
+  const inp = document.getElementById(id);
+  const ico = btn.querySelector('i');
+  if (inp.type === 'password') { inp.type = 'text'; ico.className = 'bi bi-eye-slash'; }
+  else { inp.type = 'password'; ico.className = 'bi bi-eye'; }
+}
+</script>
+{% endblock %}
