@@ -106,6 +106,16 @@ Otonova/
 
 ---
 
+## 📸 Ekran Görüntüleri
+
+### Fiyat Tahmini
+![Fiyat Tahmini](docs/screenshots/Tahmin.png)
+
+### Örnek İlan Karşılaştırması
+![Örnek İlan](docs/screenshots/örnek%20araba.png)
+
+---
+
 ## 🗺️ Yol Haritası
 
 - [ ] Kullanıcı kimlik doğrulama (giriş / kayıt backend)
