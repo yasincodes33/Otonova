@@ -1,4 +1,4 @@
-# 🚗 OtoNova
+﻿# 🚗 OtoNova
 
 **AI destekli Türkiye ikinci el araç alım-satım platformu.**
 
@@ -112,7 +112,7 @@ Otonova/
 ![Fiyat Tahmini](docs/screenshots/Tahmin.png)
 
 ### Örnek İlan Karşılaştırması
-![Örnek İlan](docs/screenshots/örnek%20araba.png)
+![Örnek İlan](docs/screenshots/ornek-ilan.png)
 
 ---
 
@@ -132,3 +132,4 @@ Otonova/
 **Yasin** — [@yasincodes33](https://github.com/yasincodes33)
 
 *Dönem projesi olarak geliştirilmektedir.*
+
