@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}Şifremi Unuttum — OtoNova{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+
+  <!-- Sol — görsel panel -->
+  <div class="auth-left" style="background:linear-gradient(155deg,rgba(10,15,30,.65) 0%,rgba(15,23,42,.58) 100%),linear-gradient(135deg,#1e3a8a,#1d4ed8)">
+    <div class="position-relative" style="z-index:2">
+      <div class="mb-auto position-absolute top-0 start-0 p-4">
+        <span style="font-family:'Inter',sans-serif;font-weight:800;font-size:1.1rem;color:#fff">
+          <i class="bi bi-car-front-fill text-primary me-2"></i>OtoNova
+        </span>
+      </div>
+      <div>
+        <span class="badge rounded-pill mb-3 px-3 py-2"
+              style="background:rgba(37,99,235,.2);color:#93c5fd;border:1px solid rgba(37,99,235,.3);font-size:.72rem;font-weight:700;letter-spacing:1px">
+          <i class="bi bi-shield-lock me-1"></i> GÜVENLİ SIFIRLAMA
+        </span>
+        <h2 class="text-white fw-black mb-3" style="font-size:1.9rem;letter-spacing:-.5px;line-height:1.25">
+          Şifreni<br>sıfırla,<br>geri dön
+        </h2>
+        <p style="color:rgba(255,255,255,.55);font-size:.88rem;line-height:1.7;max-width:320px">
+          E-posta adresinizi girin, sıfırlama bağlantısını anında gönderelim.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sağ — form -->
+  <div class="auth-right">
+    <div class="auth-card">
+      <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+             style="width:56px;height:56px;background:var(--blue-light)">
+          <i class="bi bi-key-fill" style="font-size:1.4rem;color:var(--blue)"></i>
+        </div>
+        <h1 style="font-size:1.5rem;font-weight:800;color:var(--navy);letter-spacing:-.5px;margin-bottom:4px">
+          Şifremi Unuttum
+        </h1>
+        <p style="font-size:.85rem;color:var(--gray-400);margin:0">Kayıtlı e-postanıza sıfırlama linki gönderilecek</p>
+      </div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="mb-4">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">E-posta Adresi</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon"><i class="bi bi-envelope"></i></span>
+            {{ form.email }}
+          </div>
+          {% if form.email.errors %}
+          <div style="color:#ef4444;font-size:.78rem;margin-top:4px">{{ form.email.errors.0 }}</div>
+          {% endif %}
+        </div>
+        <button type="submit" class="btn-primary-p w-100 justify-content-center"
+                style="padding:.85rem;border-radius:var(--radius-sm);font-size:.92rem">
+          <i class="bi bi-send"></i> Sıfırlama Linki Gönder
+        </button>
+      </form>
+
+      <p class="text-center mt-4 mb-0" style="font-size:.83rem;color:var(--gray-400)">
+        Şifreni hatırladın mı?
+        <a href="{% url 'accounts:giris' %}" style="color:var(--blue);font-weight:600;text-decoration:none">Giriş Yap</a>
+      </p>
+    </div>
+  </div>
+
+</div>
+{% endblock %}

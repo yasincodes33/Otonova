@@ -1,0 +1,13 @@
+Merhaba,
+
+OtoNova hesabınız için şifre sıfırlama talebinde bulundunuz.
+
+Aşağıdaki bağlantıya tıklayarak yeni şifrenizi belirleyebilirsiniz:
+
+{{ protocol }}://{{ domain }}/sifremi-sifirla/{{ uid }}/{{ token }}/
+
+Bu bağlantı 24 saat geçerlidir.
+
+Eğer bu talebi siz yapmadıysanız bu e-postayı dikkate almayınız.
+
+— OtoNova Ekibi

@@ -1,0 +1,162 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Giriş Yap — OtoNova{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'accounts/css/accounts.css' %}">
+<style>
+  .auth-left {
+    flex: 0 0 52% !important;
+    background:
+      linear-gradient(155deg, rgba(3,2,6,.62) 0%, rgba(8,6,14,.52) 60%, rgba(4,4,10,.65) 100%),
+      url("{% static 'images/Giris_yap.jpg' %}") center / cover no-repeat !important;
+  }
+  .auth-left::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,.6) 0%, transparent 55%);
+    pointer-events: none;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="auth-wrapper">
+
+  <!-- Sol — görsel panel -->
+  <div class="auth-left">
+    <div class="position-relative" style="z-index:2">
+      <!-- Logo -->
+      <div class="mb-auto position-absolute top-0 start-0 p-4">
+        <span style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:1.2rem;color:#fff;letter-spacing:2px;text-transform:uppercase">
+          <i class="bi bi-car-front-fill me-2" style="color:var(--amber)"></i>OtoNova
+        </span>
+      </div>
+      <!-- Alt metin -->
+      <div>
+        <div class="mb-3">
+          <span style="display:inline-flex;align-items:center;gap:.5rem;background:var(--amber-dim);color:var(--amber);border:1px solid var(--amber-border);padding:.35rem 1rem;border-radius:4px;font-size:.6rem;font-weight:700;letter-spacing:2.5px;font-family:'JetBrains Mono',monospace;text-transform:uppercase">
+            <i class="bi bi-shield-check-fill"></i> GÜVENLİ ALIŞVERİŞ
+          </span>
+        </div>
+        <h2 class="text-white mb-3" style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:2.4rem;letter-spacing:-.5px;line-height:1.0;text-transform:uppercase">
+          OtoNova ile<br>Güvenli Araç<br><span style="color:var(--amber)">Alışverişi</span>
+        </h2>
+        <p style="color:rgba(255,255,255,.45);font-size:.88rem;line-height:1.75;max-width:300px;font-family:'Barlow',sans-serif">
+          AI destekli fiyat analizi ile doğru fiyatı öğrenin, binlerce güvenilir ilan arasından seçiminizi yapın.
+        </p>
+        <div class="d-flex gap-3 mt-4 flex-wrap">
+          <div style="background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:8px;padding:.75rem 1rem">
+            <div style="font-family:'JetBrains Mono',monospace;color:var(--amber);font-weight:600;font-size:1.1rem">50K+</div>
+            <div style="color:rgba(255,255,255,.4);font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Aktif İlan</div>
+          </div>
+          <div style="background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:8px;padding:.75rem 1rem">
+            <div style="font-family:'JetBrains Mono',monospace;color:var(--amber);font-weight:600;font-size:1.1rem">%98</div>
+            <div style="color:rgba(255,255,255,.4);font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Güvenli İşlem</div>
+          </div>
+          <div style="background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:8px;padding:.75rem 1rem">
+            <div style="font-family:'JetBrains Mono',monospace;color:var(--amber);font-weight:600;font-size:1.1rem">AI</div>
+            <div style="color:rgba(255,255,255,.4);font-size:.65rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Fiyat Analizi</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Sağ — form -->
+  <div class="auth-right">
+    <div class="auth-card">
+
+      <!-- Başlık -->
+      <div class="text-center mb-4">
+        <div class="d-inline-flex align-items-center justify-content-center rounded-circle mb-3"
+             style="width:56px;height:56px;background:var(--blue-light)">
+          <i class="bi bi-person-fill" style="font-size:1.4rem;color:var(--blue)"></i>
+        </div>
+        <h1 style="font-size:1.5rem;font-weight:800;color:var(--navy);letter-spacing:-.5px;margin-bottom:4px">
+          Tekrar Hoş Geldiniz
+        </h1>
+        <p style="font-size:.85rem;color:var(--gray-400);margin:0">Hesabınıza giriş yapın</p>
+      </div>
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% if request.GET.next %}<input type="hidden" name="next" value="{{ request.GET.next }}">{% endif %}
+        {% for message in messages %}{% if message.tags == 'error' %}
+        <div class="alert alert-danger py-2 mb-3" style="font-size:.83rem;border-radius:var(--radius-sm)">
+          <i class="bi bi-exclamation-triangle me-2"></i>{{ message }}
+        </div>
+        {% endif %}{% endfor %}
+
+        <!-- E-posta -->
+        <div class="mb-3">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">E-posta Adresi</label>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon"><i class="bi bi-envelope"></i></span>
+            <input type="email" name="email" placeholder="ornek@mail.com" required autocomplete="email">
+          </div>
+        </div>
+
+        <!-- Şifre -->
+        <div class="mb-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <label style="font-size:.8rem;font-weight:600;color:var(--gray-600)">Şifre</label>
+            <a href="{% url 'password_reset' %}" style="font-size:.78rem;color:var(--blue);text-decoration:none;font-weight:500">Şifremi Unuttum</a>
+          </div>
+          <div class="auth-input-wrap">
+            <span class="auth-input-icon"><i class="bi bi-lock"></i></span>
+            <input type="password" id="loginPass" name="password" placeholder="••••••••" required autocomplete="current-password">
+            <button type="button" class="btn-toggle-pass" onclick="togglePass('loginPass',this)">
+              <i class="bi bi-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <!-- Beni Hatırla -->
+        <div class="d-flex align-items-center mb-4">
+          <input type="checkbox" id="remember" name="remember" class="form-check-input me-2" style="width:16px;height:16px">
+          <label for="remember" style="font-size:.83rem;color:var(--gray-500);cursor:pointer">Beni hatırla</label>
+        </div>
+
+        <!-- Giriş Butonu -->
+        <button type="submit" class="btn-primary-p w-100 justify-content-center"
+                style="padding:.85rem;border-radius:var(--radius-sm);font-size:.92rem">
+          <i class="bi bi-box-arrow-in-right"></i> Giriş Yap
+        </button>
+
+        <!-- Divider -->
+        <div class="d-flex align-items-center gap-3 my-4">
+          <hr class="flex-grow-1 m-0" style="border-color:var(--gray-200)">
+          <span style="font-size:.75rem;color:var(--gray-400);white-space:nowrap">veya</span>
+          <hr class="flex-grow-1 m-0" style="border-color:var(--gray-200)">
+        </div>
+
+        <!-- Google / Apple -->
+        <div class="d-flex gap-2">
+          <button type="button" class="btn-outline-p flex-grow-1 justify-content-center"
+                  style="padding:.7rem;border-radius:var(--radius-sm);font-size:.83rem">
+            <i class="bi bi-google"></i> Google
+          </button>
+          <button type="button" class="btn-outline-p flex-grow-1 justify-content-center"
+                  style="padding:.7rem;border-radius:var(--radius-sm);font-size:.83rem">
+            <i class="bi bi-apple"></i> Apple
+          </button>
+        </div>
+
+      </form>
+
+      <p class="text-center mt-4 mb-0" style="font-size:.83rem;color:var(--gray-400)">
+        Hesabın yok mu?
+        <a href="{% url 'accounts:kayit' %}" style="color:var(--blue);font-weight:600;text-decoration:none">Kayıt Ol</a>
+      </p>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'accounts/js/accounts.js' %}"></script>
+{% endblock %}

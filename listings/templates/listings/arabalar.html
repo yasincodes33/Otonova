@@ -1,0 +1,370 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load otonova_filters %}
+
+{% block title %}Araçlar ({{ toplam }}) — OtoNova{% endblock %}
+{% block meta_description %}İkinci el araç ilanları — filtrele, karşılaştır, güvenle satın al. {{ toplam }} aktif ilan.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'listings/css/listings.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<!-- Son Görüntülenenler — JS ile doldurulur -->
+<div id="son-goruntulenenler-wrap" style="display:none;background:var(--gray-50);border-bottom:1px solid var(--gray-200);padding:.75rem 0">
+  <div class="container">
+    <div style="font-size:.78rem;font-weight:600;color:var(--gray-500);margin-bottom:.5rem">
+      <i class="bi bi-clock-history me-1"></i>Son Görüntülenenler
+    </div>
+    <div id="son-goruntulenenler-liste" class="d-flex gap-2 overflow-auto pb-1" style="scrollbar-width:thin"></div>
+  </div>
+</div>
+
+<!-- ── Başlık ── -->
+<section style="background:var(--gray-50);border-bottom:1px solid var(--gray-200);padding:2rem 0 1.5rem">
+  <div class="container">
+    <div class="d-flex align-items-center justify-content-between flex-wrap gap-3">
+      <div>
+        <div class="section-label">ARAÇLAR</div>
+        <h1 class="section-title mb-0">İkinci El Araçlar</h1>
+        <p class="section-sub mb-0">{{ toplam }} ilan listeleniyor</p>
+      </div>
+      {% if user.is_authenticated %}
+      <a href="{% url 'listings:satis' %}" class="btn-primary-p">
+        <i class="bi bi-plus-lg"></i> İlan Ver
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+<div class="container py-4">
+  <div class="row g-4">
+
+    <!-- ══════════════ SOL SIDEBAR: FİLTRELER ══════════════ -->
+    <div class="col-lg-3">
+      <form method="get" id="filterForm">
+        <div style="background:var(--card-bg);border:1px solid var(--gray-200);border-radius:var(--radius)">
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-200);display:flex;align-items:center;justify-content:space-between;border-radius:var(--radius) var(--radius) 0 0">
+            <span style="font-weight:700;font-size:.9rem;color:var(--navy)"><i class="bi bi-funnel me-2 text-primary"></i>Filtrele</span>
+            <a href="{% url 'listings:arabalar' %}" style="font-size:.78rem;color:var(--gray-400);text-decoration:none">Temizle</a>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-1">Arama</label>
+            <input type="text" name="q" value="{{ filtreler.q }}" placeholder="Marka, model..."
+                   list="marka-datalist"
+                   style="width:100%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif">
+            <datalist id="marka-datalist">
+              {% for m in markalar_list %}<option value="{{ m }}">{% endfor %}
+            </datalist>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-1">Marka</label>
+            <select name="marka" id="f_marka" class="cs-select" style="width:100%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif;background:var(--card-bg)">
+              <option value="">Tümü</option>
+              {% for m in markalar %}
+              <option value="{{ m }}" {% if filtreler.marka == m %}selected{% endif %}>{{ m }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-1">Seri</label>
+            <select name="seri" id="f_seri" class="cs-select" style="width:100%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif;background:var(--card-bg)">
+              <option value="">Tümü</option>
+            </select>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-1">Model</label>
+            <select name="model" id="f_model" class="cs-select" style="width:100%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif;background:var(--card-bg)">
+              <option value="">Tümü</option>
+            </select>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-1">Şehir</label>
+            <select name="sehir" class="cs-select" style="width:100%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif;background:var(--card-bg)">
+              <option value="">Tümü</option>
+              {% for s in sehirler %}
+              <option value="{{ s }}" {% if filtreler.sehir == s %}selected{% endif %}>{{ s }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-1">Vites</label>
+            <select name="vites" class="cs-select" style="width:100%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif;background:var(--card-bg)">
+              <option value="">Tümü</option>
+              {% for v in vites_list %}
+              <option value="{{ v }}" {% if filtreler.vites == v %}selected{% endif %}>{{ v }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-1">Yakıt</label>
+            <select name="yakit" class="cs-select" style="width:100%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif;background:var(--card-bg)">
+              <option value="">Tümü</option>
+              {% for y in yakit_list %}
+              <option value="{{ y }}" {% if filtreler.yakit == y %}selected{% endif %}>{{ y }}</option>
+              {% endfor %}
+            </select>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-2">Yıl Aralığı</label>
+            <div class="d-flex gap-2">
+              <input type="number" id="yil_min_inp" name="yil_min" value="{{ filtreler.yil_min }}"
+                     placeholder="Min" min="1950" max="2026"
+                     style="width:50%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 10px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif">
+              <input type="number" id="yil_max_inp" name="yil_max" value="{{ filtreler.yil_max }}"
+                     placeholder="Max" min="1950" max="2026"
+                     style="width:50%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 10px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif">
+            </div>
+            <div id="yil-uyari" style="display:none;font-size:.72rem;color:#ef4444;margin-top:4px">
+              Min yıl, max yıldan büyük olamaz.
+            </div>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-1">Max KM</label>
+            <input type="number" name="km_max" value="{{ filtreler.km_max }}" placeholder="Örn: 150000"
+                   style="width:100%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif">
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-2">Fiyat Aralığı (TL)</label>
+            <div class="d-flex gap-2">
+              <input type="number" name="fiyat_min" value="{{ filtreler.fiyat_min }}" placeholder="Min"
+                     style="width:50%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 10px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif">
+              <input type="number" name="fiyat_max" value="{{ filtreler.fiyat_max }}" placeholder="Max"
+                     style="width:50%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 10px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif">
+            </div>
+          </div>
+
+          <!-- AI Fiyat Durumu filtresi -->
+          <div style="padding:1rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+            <label class="search-field-label mb-2" style="display:flex;align-items:center;gap:.35rem">
+              <i class="bi bi-cpu-fill" style="color:var(--electric)"></i> AI Fiyat Analizi
+            </label>
+            <select name="ai_durum" class="cs-select" onchange="this.form.submit()"
+                    style="width:100%;border:1.5px solid var(--gray-200);border-radius:8px;padding:8px 12px;font-size:.875rem;outline:none;font-family:'Inter',sans-serif;background:var(--card-bg)">
+              <option value=""          {% if not filtreler.ai_durum %}selected{% endif %}>Tüm İlanlar</option>
+              <option value="firsat"    {% if filtreler.ai_durum == 'firsat' %}selected{% endif %}>⭐ Fırsat İlanlar</option>
+              <option value="iyi"       {% if filtreler.ai_durum == 'iyi' %}selected{% endif %}>👍 İyi Fiyatlı (-%5 ve altı)</option>
+              <option value="normal"    {% if filtreler.ai_durum == 'normal' %}selected{% endif %}>✓ Normal Fiyatlı</option>
+              <option value="yuksek"    {% if filtreler.ai_durum == 'yuksek' %}selected{% endif %}>⚠ Yüksek Fiyatlı (+%10 üstü)</option>
+            </select>
+          </div>
+
+          <div style="padding:1rem 1.25rem;border-radius:0 0 var(--radius) var(--radius)">
+            <button type="submit" class="btn-primary-p w-100 justify-content-center">
+              <i class="bi bi-search"></i> Filtrele
+            </button>
+          </div>
+
+        </div>
+      </form>
+    </div>
+
+    <!-- ══════════════ SAĞ: İLAN GRİDİ ══════════════ -->
+    <div class="col-lg-9">
+
+      <div class="d-flex align-items-center justify-content-between mb-3 flex-wrap gap-2">
+        <div class="d-flex align-items-center gap-2 flex-wrap">
+          <span style="font-size:.875rem;color:var(--gray-500)">
+            <strong style="color:var(--navy)">{{ toplam }}</strong> ilan bulundu
+          </span>
+          {% if firsat_sayisi %}
+          <span style="display:inline-flex;align-items:center;gap:.3rem;background:rgba(34,197,94,.12);color:#22c55e;border:1px solid rgba(34,197,94,.25);padding:2px 10px;border-radius:20px;font-size:.7rem;font-weight:700;font-family:'JetBrains Mono',monospace">
+            <i class="bi bi-stars"></i> {{ firsat_sayisi }} FIRSAT
+          </span>
+          {% endif %}
+        </div>
+        <div class="d-flex align-items-center gap-2">
+          <label style="font-size:.82rem;color:var(--gray-500);white-space:nowrap">Sırala:</label>
+          <select name="sira" form="filterForm" onchange="document.getElementById('filterForm').submit()"
+                  style="border:1.5px solid var(--gray-200);border-radius:8px;padding:6px 10px;font-size:.82rem;outline:none;font-family:'Inter',sans-serif;background:var(--card-bg)">
+            <option value="" {% if not filtreler.sira %}selected{% endif %}>En Yeni</option>
+            <option value="firsat"    {% if filtreler.sira == 'firsat' %}selected{% endif %}>&#11088; En Fırsatlı (AI)</option>
+            <option value="ucuz"      {% if filtreler.sira == 'ucuz' %}selected{% endif %}>&#8595; Piyasa Altı (AI)</option>
+            <option value="fiyat_asc"  {% if filtreler.sira == 'fiyat_asc' %}selected{% endif %}>Fiyat (Ucuzdan)</option>
+            <option value="fiyat_desc" {% if filtreler.sira == 'fiyat_desc' %}selected{% endif %}>Fiyat (Pahalıdan)</option>
+            <option value="yil_desc"   {% if filtreler.sira == 'yil_desc' %}selected{% endif %}>En Yeni Model</option>
+            <option value="km_asc"     {% if filtreler.sira == 'km_asc' %}selected{% endif %}>Az KM</option>
+          </select>
+        </div>
+      </div>
+
+      {% if ilanlar %}
+      <div class="row g-3">
+        {% for ilan in ilanlar %}
+        <div class="col-sm-6 col-xl-4">
+          <div class="car-card h-100 d-flex flex-column">
+
+            <div class="car-img-wrap">
+              {% with kapak=ilan.fotolar.all|dictsort:"sira" %}
+              {% if kapak %}
+                <img src="{{ kapak.0.foto.url }}" alt="{{ ilan.baslik }}" class="car-img" loading="lazy">
+              {% else %}
+                <div class="car-img d-flex align-items-center justify-content-center" style="background:var(--gray-100)">
+                  <i class="bi bi-car-front" style="font-size:3rem;color:var(--gray-400)"></i>
+                </div>
+              {% endif %}
+              {% endwith %}
+              <div class="car-badge-wrap">
+                {% if ilan.tramer_kategori == 'yok' %}
+                  <span class="car-badge car-badge-green">Hasarsız</span>
+                {% endif %}
+                <span class="car-badge" style="background:rgba(0,0,0,.55);color:#fff">{{ ilan.kimden }}</span>
+              </div>
+              <button class="car-fav {% if user.is_authenticated %}fav-btn{% endif %}"
+                      data-ilan="{{ ilan.pk }}" title="Favorilere Ekle">
+                <i class="bi bi-heart"></i>
+              </button>
+            </div>
+
+            <div class="car-body flex-grow-1">
+              <div class="car-title">{{ ilan.marka }} {{ ilan.seri }} {{ ilan.model }}</div>
+              <div class="car-meta">
+                {{ ilan.yil }}&nbsp;·&nbsp;{{ ilan.yakit_tipi }}&nbsp;·&nbsp;{{ ilan.vites_tipi }}&nbsp;·&nbsp;{{ ilan.kilometre|floatformat:0 }} km
+              </div>
+              <div class="d-flex align-items-center flex-wrap gap-1">
+                <span class="car-price">{{ ilan.fiyat|para }} TL</span>
+                {% if ilan.ai_tahmin_fiyat %}
+                  {% if ilan.firsat_skoru >= 70 %}
+                    <span class="car-ai-score" style="color:#22c55e;background:rgba(34,197,94,.12);border-color:rgba(34,197,94,.28)">
+                      <i class="bi bi-stars"></i> Fırsat
+                    </span>
+                  {% elif ilan.ai_sapma_yuzdesi is not None and ilan.ai_sapma_yuzdesi <= -5 %}
+                    <span class="car-ai-score" style="color:#3b82f6;background:rgba(59,130,246,.12);border-color:rgba(59,130,246,.3)">
+                      <i class="bi bi-hand-thumbs-up-fill"></i> İyi Fiyat
+                    </span>
+                  {% elif ilan.ai_sapma_yuzdesi is not None and ilan.ai_sapma_yuzdesi <= 10 %}
+                    <span class="car-ai-score" style="color:#94a3b8;background:rgba(148,163,184,.1);border-color:rgba(148,163,184,.25)">
+                      <i class="bi bi-dash-circle"></i> Normal
+                    </span>
+                  {% elif ilan.ai_sapma_yuzdesi is not None %}
+                    <span class="car-ai-score" style="color:#d97706;background:rgba(217,119,6,.1);border-color:rgba(217,119,6,.3)">
+                      <i class="bi bi-exclamation-triangle"></i> Yüksek Fiyat
+                    </span>
+                  {% endif %}
+                  {% if ilan.ai_sapma_yuzdesi is not None %}
+                  <span style="font-size:.62rem;color:{% if ilan.ai_sapma_yuzdesi < 0 %}#22c55e{% else %}#d97706{% endif %};font-family:'JetBrains Mono',monospace;font-weight:600">
+                    {% if ilan.ai_sapma_yuzdesi < 0 %}&#8595;{{ ilan.ai_sapma_yuzdesi|floatformat:0|slice:"1:" }}%{% else %}&#8593;+{{ ilan.ai_sapma_yuzdesi|floatformat:0 }}%{% endif %}
+                  </span>
+                  {% endif %}
+                {% endif %}
+              </div>
+              <div class="mt-2" style="font-size:.78rem;color:var(--gray-400)">
+                <i class="bi bi-geo-alt me-1"></i>{{ ilan.sehir }}
+              </div>
+            </div>
+
+            <div class="car-footer">
+              <a href="{% url 'listings:ilan_detay' ilan.slug %}" class="btn-card-primary">Detayları Gör</a>
+              <a href="{% url 'predictions:tahmin' %}" class="btn-card-ghost" title="Fiyat Tahmini">
+                <i class="bi bi-cpu"></i>
+              </a>
+            </div>
+
+          </div>
+        </div>
+        {% endfor %}
+      </div>
+
+      {% if ilanlar.paginator.num_pages > 1 %}
+      <nav class="ot-pagination" aria-label="Sayfalama">
+        {% if ilanlar.has_previous %}
+        <a class="ot-page-btn" href="?{% for k,v in filtreler.items %}{% if k != 'sayfa' %}{{ k }}={{ v }}&{% endif %}{% endfor %}sayfa={{ ilanlar.previous_page_number }}" aria-label="Önceki">
+          <i class="bi bi-chevron-left"></i>
+        </a>
+        {% else %}
+        <span class="ot-page-btn disabled"><i class="bi bi-chevron-left"></i></span>
+        {% endif %}
+
+        {% for num in ilanlar.paginator.page_range %}
+          {% if ilanlar.number == num %}
+            <span class="ot-page-btn active">{{ num }}</span>
+          {% elif num == 1 or num == ilanlar.paginator.num_pages or num >= ilanlar.number|add:"-2" and num <= ilanlar.number|add:"2" %}
+            <a class="ot-page-btn" href="?{% for k,v in filtreler.items %}{% if k != 'sayfa' %}{{ k }}={{ v }}&{% endif %}{% endfor %}sayfa={{ num }}">{{ num }}</a>
+          {% elif num == ilanlar.number|add:"-3" or num == ilanlar.number|add:"3" %}
+            <span class="ot-page-btn ellipsis">…</span>
+          {% endif %}
+        {% endfor %}
+
+        {% if ilanlar.has_next %}
+        <a class="ot-page-btn" href="?{% for k,v in filtreler.items %}{% if k != 'sayfa' %}{{ k }}={{ v }}&{% endif %}{% endfor %}sayfa={{ ilanlar.next_page_number }}" aria-label="Sonraki">
+          <i class="bi bi-chevron-right"></i>
+        </a>
+        {% else %}
+        <span class="ot-page-btn disabled"><i class="bi bi-chevron-right"></i></span>
+        {% endif %}
+      </nav>
+      {% endif %}
+
+      {% else %}
+      <div class="text-center py-5">
+        <i class="bi bi-search" style="font-size:3rem;color:var(--gray-200)"></i>
+        <h4 class="mt-3" style="color:var(--gray-500)">Uygun ilan bulunamadı</h4>
+        <p style="color:var(--gray-400);font-size:.9rem">Filtrelerinizi değiştirerek tekrar deneyin.</p>
+        <a href="{% url 'listings:arabalar' %}" class="btn-outline-p mt-2">Filtreleri Temizle</a>
+      </div>
+      {% endif %}
+
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+window.ARABALAR_CFG = {
+  msMap:     {{ marka_seri_model_json|safe }},
+  initSeri:  '{{ filtreler.seri|escapejs }}',
+  initModel: '{{ filtreler.model|escapejs }}',
+  favoriUrl: '{% url "listings:favori_toggle" %}',
+  csrfToken: '{{ csrf_token }}'
+};
+</script>
+<script src="{% static 'listings/js/arabalar.js' %}"></script>
+<script>
+(function(){
+  var minInp = document.getElementById('yil_min_inp');
+  var maxInp = document.getElementById('yil_max_inp');
+  var uyari  = document.getElementById('yil-uyari');
+  if (!minInp || !maxInp) return;
+
+  function kontrol(){
+    var mn = parseInt(minInp.value) || 0;
+    var mx = parseInt(maxInp.value) || 0;
+    var gecersiz = mn > 0 && mx > 0 && mn > mx;
+    uyari.style.display = gecersiz ? 'block' : 'none';
+    minInp.style.borderColor = gecersiz ? '#ef4444' : '';
+    maxInp.style.borderColor = gecersiz ? '#ef4444' : '';
+    return !gecersiz;
+  }
+
+  minInp.addEventListener('change', function(){
+    var mn = parseInt(this.value) || 0;
+    var mx = parseInt(maxInp.value) || 0;
+    if (mx > 0 && mn > mx) maxInp.value = this.value;
+    kontrol();
+  });
+  maxInp.addEventListener('change', function(){
+    var mn = parseInt(minInp.value) || 0;
+    var mx = parseInt(this.value) || 0;
+    if (mn > 0 && mn > mx) minInp.value = this.value;
+    kontrol();
+  });
+
+  var form = minInp.closest('form');
+  if (form) form.addEventListener('submit', function(e){ if (!kontrol()) e.preventDefault(); });
+})();
+</script>
+{% endblock %}

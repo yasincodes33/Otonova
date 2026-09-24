@@ -1,0 +1,428 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Araç Fiyat Tahmini | OtoNova{% endblock %}
+{% block meta_description %}AI ile araç fiyat tahmini — marka, model, km ve donanım bilgisiyle saniyeler içinde piyasa değerini öğren.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'predictions/css/predictions.css' %}?v=9">
+<link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet">
+<style>
+  .tp-hero {
+    background:
+      linear-gradient(160deg,rgba(3,2,6,.65) 0%,rgba(8,6,14,.55) 60%,rgba(4,4,10,.68) 100%),
+      url("{% static 'images/Fiyat Tahmini.jpg' %}") center / cover no-repeat;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ══ Hero ══════════════════════════════════════════════════════════════ -->
+<section class="tp-hero">
+  <div class="tp-hero-grid"></div>
+  <div class="tp-hero-glow"></div>
+  <div class="container position-relative" style="z-index:2">
+    <div class="tp-hero-inner">
+      <div class="tp-hero-icon-wrap">
+        <i class="bi bi-cpu-fill"></i>
+      </div>
+      <div class="flex-grow-1 min-w-0">
+        <div class="tp-hero-eyebrow">AI Fiyat Analizi</div>
+        <h1 class="tp-hero-heading">Araç Fiyat Tahmini</h1>
+        <p class="tp-hero-sub">
+          Ensemble model (RF&nbsp;+&nbsp;GB)
+          <span class="tp-hero-dot">&nbsp;·&nbsp;</span>
+          R² 0.96
+          <span class="tp-hero-dot">&nbsp;·&nbsp;</span>
+          Gerçek zamanlı analiz
+        </p>
+      </div>
+      <div class="tp-hero-badges">
+        <span class="tp-badge-ai"><i class="bi bi-stars me-1"></i>AI Destekli</span>
+        {% if metrics %}<span class="tp-badge-metric"><i class="bi bi-graph-up me-1"></i>R² {{ metrics.r2|floatformat:2 }}</span>{% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ Content ═══════════════════════════════════════════════════════════ -->
+<div class="container py-5">
+  <div class="row g-4 align-items-start">
+
+    <!-- ── Sol: Form ─────────────────────────────────────────────────── -->
+    <div class="col-lg-7">
+      <div class="tp-card">
+
+        <div class="tp-card-head">
+          <i class="bi bi-sliders tp-head-icon me-2"></i>
+          Araç Parametrelerini Girin
+        </div>
+
+        <div class="tp-card-body">
+
+          <!-- ─ Araç Kimliği ──────────────────────────────────────────── -->
+          <div class="tp-section">
+            <i class="bi bi-car-front"></i> Araç Kimliği
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-md-4">
+              <label class="tp-label">Marka</label>
+              <select id="marka" class="tp-select">
+                <option value="">— Marka Seçin —</option>
+                {% for m in markalar %}<option value="{{ m }}">{{ m }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="tp-label">Seri</label>
+              <select id="seri" class="tp-select">
+                <option value="">— Önce Marka —</option>
+              </select>
+            </div>
+            <div class="col-md-4">
+              <label class="tp-label">Model</label>
+              <select id="model" class="tp-select">
+                <option value="">— Önce Seri —</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-2">
+            <div class="col-sm-6">
+              <label class="tp-label">Kasa Tipi</label>
+              <select id="kasa_tipi" class="tp-select">
+                {% for k in kasa_tipleri %}<option>{{ k }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label class="tp-label">Renk</label>
+              <select id="renk" class="tp-select">
+                {% for r in renkler %}<option {% if r == "Beyaz" %}selected{% endif %}>{{ r }}</option>{% endfor %}
+              </select>
+            </div>
+          </div>
+
+          <!-- ─ Teknik Özellikler ──────────────────────────────────────── -->
+          <div class="tp-section">
+            <i class="bi bi-gear-fill"></i> Teknik Özellikler
+          </div>
+
+          <div class="mb-3">
+            <label class="tp-label">Vites Tipi</label>
+            <div class="seg-group" id="vites_group">
+              {% for v in vites_tipleri %}
+              <button type="button" class="seg-btn{% if forloop.first %} active{% endif %}" data-value="{{ v }}">{{ v }}</button>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <label class="tp-label">Yakıt Tipi</label>
+            <div class="seg-group" id="yakit_group">
+              {% for y in yakit_tipleri %}
+              <button type="button" class="seg-btn{% if forloop.first %} active{% endif %}" data-value="{{ y }}">
+                {% if y == "LPG & Benzin" %}LPG{% else %}{{ y }}{% endif %}
+              </button>
+              {% endfor %}
+            </div>
+          </div>
+
+          <div class="mb-4">
+            <label class="tp-label">Çekiş Sistemi</label>
+            <div class="seg-group" id="cekis_group">
+              <button type="button" class="seg-btn" data-value="4WD (Sürekli)">4WD</button>
+              <button type="button" class="seg-btn" data-value="AWD (Elektronik)">AWD</button>
+              <button type="button" class="seg-btn" data-value="Arkadan İtiş">Arkadan</button>
+              <button type="button" class="seg-btn active" data-value="Önden Çekiş">Önden</button>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-2">
+            <div class="col-sm-6 col-lg-3">
+              <label class="tp-label">Motor Hacmi</label>
+              <select id="motor_hacmi" class="tp-select">
+                {% for h in motor_hacimler %}<option value="{{ h }}">{{ h }} cc</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <label class="tp-label">Motor Gücü (HP)</label>
+              <input type="number" id="motor_gucu" class="tp-input" value="" placeholder="Örn: 120">
+              <div class="tp-hint">50 – 1000 HP</div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <label class="tp-label">Çıkış Yılı</label>
+              <input type="number" id="yil" class="tp-input" value="" placeholder="Örn: 2018">
+              <div class="tp-hint">1974 – 2026</div>
+            </div>
+            <div class="col-sm-6 col-lg-3">
+              <label class="tp-label">Kilometre</label>
+              <input type="number" id="kilometre" class="tp-input" value="" placeholder="Örn: 75000">
+              <div class="tp-hint">6K – 500K km</div>
+            </div>
+          </div>
+
+          <!-- ─ İlan Bilgileri ─────────────────────────────────────────── -->
+          <div class="tp-section">
+            <i class="bi bi-pin-map-fill"></i> İlan Bilgileri
+          </div>
+
+          <div class="row g-3 mb-3">
+            <div class="col-sm-6">
+              <label class="tp-label">Şehir</label>
+              <select id="sehir" class="tp-select">
+                {% for s in sehirler %}<option>{{ s }}</option>{% endfor %}
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label class="tp-label">Boyalı Parça</label>
+              <input type="number" id="boyali_sayisi" class="tp-input" value="0" placeholder="0">
+              <div class="tp-hint">0 – 20 parça</div>
+            </div>
+          </div>
+
+          <div class="row g-3 mb-4">
+            <div class="col-sm-6">
+              <label class="tp-label d-flex align-items-center justify-content-between gap-2">
+                <span>Tramer Tutarı (TL)</span>
+                <span id="tramer-badge" class="tramer-badge tramer-yok">YOK</span>
+              </label>
+              <input type="number" id="tramer" class="tp-input" value="0" placeholder="0" oninput="tramiGuncelle()">
+              <div class="tp-hint"><code>-1</code> = bilinmiyor &nbsp;·&nbsp; <code>0</code> = hasar yok</div>
+            </div>
+            <div class="col-sm-6">
+              <label class="tp-label">Değişen Parça</label>
+              <input type="number" id="degisen_sayisi" class="tp-input" value="0" placeholder="0">
+              <div class="tp-hint">0 – 20 parça</div>
+            </div>
+          </div>
+
+          <!-- ─ Submit ──────────────────────────────────────────────────── -->
+          <div class="d-flex gap-2">
+            <button id="btn" class="tp-submit flex-grow-1" onclick="tahminEt()">
+              <div class="spinner" id="spinner"></div>
+              <i class="bi bi-cpu-fill" id="btn-icon"></i>
+              <span id="btn-text">Fiyat Tahmin Et</span>
+            </button>
+            <button class="tp-reset" type="button" onclick="formSifirla()" title="Formu Sıfırla">
+              <i class="bi bi-arrow-counterclockwise"></i>
+            </button>
+          </div>
+
+          <div id="error-box" class="tp-error mt-3" style="display:none"></div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Sağ: Sonuç & Bilgi ─────────────────────────────────────────── -->
+    <div class="col-lg-5">
+
+      <!-- Bilgi kartı (tahmin yapılmadan önce) -->
+      <div id="pre-result-card">
+        <div class="tp-info-pre">
+          <div class="tp-info-pre-head">
+            <div class="tp-info-pre-icon"><i class="bi bi-cpu-fill"></i></div>
+            <div>
+              <div class="tp-info-pre-label">Model Bilgisi</div>
+              <div class="tp-info-pre-title">Ensemble AI</div>
+            </div>
+          </div>
+          <div>
+            <div class="tp-metric-row">
+              <span class="tp-metric-name">
+                <i class="bi bi-graph-up me-1"></i>Doğruluk (R²)
+                <span class="tp-info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="R² skoru modelin gerçek fiyatları ne kadar iyi açıkladığını gösterir. 1.0 mükemmel, 0.96 = fiyatların %96'sını açıklıyor." tabindex="0">
+                  <i class="bi bi-info-circle" style="font-size:.75rem;color:var(--blue);cursor:pointer"></i>
+                </span>
+              </span>
+              <span class="tp-metric-val" style="color:var(--electric)">{% if metrics %}{{ metrics.r2|floatformat:3 }}{% else %}—{% endif %}</span>
+            </div>
+            <div class="tp-metric-row">
+              <span class="tp-metric-name">
+                <i class="bi bi-activity me-1"></i>MAPE
+                <span class="tp-info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="MAPE (Ortalama Mutlak Yüzde Hata): modelin tahminleri gerçek fiyattan ortalama yüzde kaç sapıyor. Düşük = daha iyi." tabindex="0">
+                  <i class="bi bi-info-circle" style="font-size:.75rem;color:var(--blue);cursor:pointer"></i>
+                </span>
+              </span>
+              <span class="tp-metric-val">{% if metrics %}%{{ metrics.mape|floatformat:1 }}{% else %}—{% endif %}</span>
+            </div>
+            <div class="tp-metric-row">
+              <span class="tp-metric-name">
+                <i class="bi bi-layers me-1"></i>Algoritma
+                <span class="tp-info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="RF = Random Forest, GB = Gradient Boosting. İki modelin tahminleri birleştirilir (ensemble) — tek modele göre daha kararlı sonuç verir." tabindex="0">
+                  <i class="bi bi-info-circle" style="font-size:.75rem;color:var(--blue);cursor:pointer"></i>
+                </span>
+              </span>
+              <span class="tp-metric-val">RF + GB</span>
+            </div>
+            <div class="tp-metric-row">
+              <span class="tp-metric-name">
+                <i class="bi bi-database me-1"></i>Eğitim Verisi
+                <span class="tp-info-icon" data-bs-toggle="tooltip" data-bs-placement="right" title="Model, Türkiye'deki gerçek ikinci el araç satışlarından derlenen ~40.000 veri noktasıyla eğitilmiştir." tabindex="0">
+                  <i class="bi bi-info-circle" style="font-size:.75rem;color:var(--blue);cursor:pointer"></i>
+                </span>
+              </span>
+              <span class="tp-metric-val">~40K kayıt</span>
+            </div>
+          </div>
+          <p class="tp-info-pre-desc mt-3">
+            Formu doldurun ve <strong>Fiyat Tahmin Et</strong>'e tıklayın.
+            Güncel piyasa verileriyle eğitilmiş ensemble model saniyeler içinde tahmini piyasa değerini hesaplar.
+          </p>
+        </div>
+      </div>
+
+      <!-- Sonuç paneli -->
+      <div id="result-panel" style="display:none">
+        <div style="position:sticky;top:80px">
+
+          <!-- Ana sonuç kartı -->
+          <div style="background:linear-gradient(135deg,#0a0a0d 0%,#16161e 100%);border-radius:16px;padding:1.75rem;color:#fff;margin-bottom:1rem;box-shadow:0 8px 40px rgba(0,0,0,.6);border:1px solid #2a2a38">
+
+            <div style="display:flex;align-items:center;gap:.65rem;margin-bottom:1.25rem">
+              <div style="width:38px;height:38px;background:rgba(59,130,246,.25);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                <i class="bi bi-cpu" style="color:#60a5fa;font-size:1rem"></i>
+              </div>
+              <div style="min-width:0">
+                <div style="font-size:.62rem;font-weight:700;color:var(--electric);text-transform:uppercase;letter-spacing:2px;font-family:'JetBrains Mono',monospace">AI TAHMİN SONUCU</div>
+                <div id="res-araba-adi" style="font-size:.72rem;color:#475569;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">—</div>
+              </div>
+              <span style="margin-left:auto;background:rgba(34,197,94,.15);border:1px solid rgba(34,197,94,.3);color:#4ade80;padding:3px 10px;border-radius:20px;font-size:.65rem;font-weight:700;flex-shrink:0">
+                <i class="bi bi-stars me-1"></i>AI
+              </span>
+            </div>
+
+            <div style="text-align:center;padding:1.1rem 0 1rem;border-bottom:1px solid rgba(255,255,255,.07)">
+              <div style="font-size:.68rem;color:#94a3b8;text-transform:uppercase;letter-spacing:.8px;margin-bottom:.3rem">Tahmini Piyasa Değeri</div>
+              <div id="res-fiyat" style="font-size:2.1rem;font-weight:700;background:linear-gradient(135deg,var(--electric),var(--amber));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;letter-spacing:-1px;line-height:1.15;min-height:2.5rem;font-family:'JetBrains Mono',monospace">—</div>
+              <div style="font-size:.72rem;color:#64748b;margin-top:.15rem">Türk Lirası</div>
+            </div>
+
+            <div style="padding:.9rem 0;border-bottom:1px solid rgba(255,255,255,.07)">
+              <div style="font-size:.65rem;color:#64748b;text-transform:uppercase;letter-spacing:.6px;margin-bottom:.65rem">Güven Aralığı (P10 – P90)</div>
+              <div style="position:relative;height:6px;background:rgba(255,255,255,.08);border-radius:3px;margin-bottom:.65rem">
+                <div id="range-bar" style="position:absolute;height:100%;background:linear-gradient(90deg,#22c55e,#3b82f6,#f59e0b);border-radius:3px;left:0;right:0"></div>
+                <div id="range-dot" style="position:absolute;top:50%;width:14px;height:14px;background:#60a5fa;border:2px solid #0f172a;border-radius:50%;transform:translate(-50%,-50%)"></div>
+              </div>
+              <div style="display:flex;gap:.5rem">
+                <div style="flex:1;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.2);border-radius:8px;padding:.5rem .6rem;text-align:center">
+                  <div style="font-size:.6rem;color:#86efac;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.15rem">Alt Sınır</div>
+                  <div id="res-dusuk" style="font-size:.82rem;font-weight:700;color:#4ade80">—</div>
+                </div>
+                <div style="flex:1;background:rgba(251,191,36,.08);border:1px solid rgba(251,191,36,.18);border-radius:8px;padding:.5rem .6rem;text-align:center">
+                  <div style="font-size:.6rem;color:#fde68a;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.15rem">Üst Sınır</div>
+                  <div id="res-yuksek" style="font-size:.82rem;font-weight:700;color:#fbbf24">—</div>
+                </div>
+              </div>
+            </div>
+
+            <div style="padding:.9rem 0;border-bottom:1px solid rgba(255,255,255,.07)">
+              <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.45rem">
+                <span style="font-size:.7rem;color:#94a3b8">Model Doğruluğu (R²)</span>
+                <span id="res-r2" style="font-size:.85rem;font-weight:600;color:var(--electric);font-family:'JetBrains Mono',monospace">—</span>
+              </div>
+              <div style="height:6px;background:rgba(255,255,255,.08);border-radius:3px;overflow:hidden">
+                <div id="r2-fill" style="height:100%;background:linear-gradient(90deg,var(--electric),var(--electric-glow));border-radius:3px;width:0%;transition:width 1s cubic-bezier(.4,0,.2,1)"></div>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:.5rem;padding-top:.9rem">
+              <div style="flex:1;text-align:center">
+                <div style="font-size:.58rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.2rem" title="Bu fiyat segmentinin ortalama mutlak hatası">Segment Hata</div>
+                <div id="res-mae" style="font-size:.78rem;font-weight:700;color:#fbbf24">—</div>
+              </div>
+              <div style="width:1px;background:rgba(255,255,255,.07)"></div>
+              <div style="flex:1;text-align:center">
+                <div style="font-size:.58rem;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-bottom:.2rem">Araç Yaşı</div>
+                <div id="res-yas" style="font-size:.78rem;font-weight:700;color:#e2e8f0">—</div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Kullanıcı dostu açıklama bölümü -->
+          <div id="explain-wrap" style="display:none;margin-top:.85rem">
+            <div style="background:var(--card-bg);border:1px solid var(--gray-200);border-radius:12px;overflow:hidden">
+
+              <div style="padding:.65rem 1rem;background:var(--gray-50);border-bottom:1px solid var(--gray-200);display:flex;align-items:center;gap:.45rem">
+                <i class="bi bi-info-circle-fill" style="color:var(--electric);font-size:.8rem"></i>
+                <span style="font-size:.72rem;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.8px">Tahmin Nasıl Yorumlanır?</span>
+              </div>
+
+              <!-- Hata payı -->
+              <div style="padding:.75rem 1rem;border-bottom:1px solid var(--gray-100);display:flex;gap:.6rem;align-items:flex-start">
+                <div style="width:30px;height:30px;border-radius:8px;background:rgba(251,191,36,.12);border:1px solid rgba(251,191,36,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                  <i class="bi bi-lightning-charge-fill" style="color:#fbbf24;font-size:.75rem"></i>
+                </div>
+                <div>
+                  <div style="font-size:.72rem;font-weight:700;color:var(--navy);margin-bottom:.15rem">Bu Araç İçin Hata Payı</div>
+                  <div id="explain-mae-range" style="font-size:.78rem;color:var(--gray-500);line-height:1.5">—</div>
+                </div>
+              </div>
+
+              <!-- Güven aralığı -->
+              <div style="padding:.75rem 1rem;border-bottom:1px solid var(--gray-100);display:flex;gap:.6rem;align-items:flex-start">
+                <div style="width:30px;height:30px;border-radius:8px;background:rgba(59,130,246,.1);border:1px solid rgba(59,130,246,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                  <i class="bi bi-bar-chart-fill" style="color:#60a5fa;font-size:.75rem"></i>
+                </div>
+                <div>
+                  <div style="font-size:.72rem;font-weight:700;color:var(--navy);margin-bottom:.15rem">Güven Aralığı (P10–P90)</div>
+                  <div id="explain-interval" style="font-size:.78rem;color:var(--gray-500);line-height:1.5">—</div>
+                </div>
+              </div>
+
+              <!-- Model güvenilirliği -->
+              <div style="padding:.75rem 1rem;display:flex;gap:.6rem;align-items:flex-start">
+                <div style="width:30px;height:30px;border-radius:8px;background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.22);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+                  <i class="bi bi-patch-check-fill" style="color:#22c55e;font-size:.75rem"></i>
+                </div>
+                <div>
+                  <div style="font-size:.72rem;font-weight:700;color:var(--navy);margin-bottom:.15rem">Model Güvenilirliği (R²)</div>
+                  <div id="explain-r2" style="font-size:.78rem;color:var(--gray-500);line-height:1.5">—</div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Paylaşım -->
+          <div id="share-tahmin-wrap" style="display:none;margin-top:.75rem">
+            <div class="d-flex gap-2">
+              <a id="share-tahmin-wa" href="#" target="_blank" rel="noopener"
+                 class="btn-outline-p flex-grow-1 justify-content-center" style="font-size:.8rem;padding:.55rem .5rem">
+                <i class="bi bi-whatsapp"></i> WhatsApp
+              </a>
+              <button onclick="copyTahmin()" class="btn-outline-p flex-grow-1 justify-content-center" style="font-size:.8rem;padding:.55rem .5rem">
+                <i class="bi bi-clipboard"></i> Kopyala
+              </button>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+<script>window.markaseriMap            = {{ marka_seri_json|safe }};</script>
+<script>window.markaseriModelMap       = {{ marka_seri_model_json|safe }};</script>
+<script>window.markaseriModelKasaMap   = {{ marka_seri_model_kasa_json|safe }};</script>
+<script>window.tumKasaTipleri          = {{ kasa_tipleri_json|safe }};</script>
+<script>window.TAHMIN_ET_URL           = "{% url 'predictions:tahmin_et' %}";</script>
+<script>window.CSRF_TOKEN              = "{{ csrf_token }}";</script>
+<script src="{% static 'predictions/js/predictions.js' %}?v=9"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  document.querySelectorAll('[data-bs-toggle="tooltip"]').forEach(function(el) {
+    new bootstrap.Tooltip(el, { trigger: 'hover focus' });
+  });
+});
+</script>
+{% endblock %}

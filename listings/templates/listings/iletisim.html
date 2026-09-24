@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}İletişim — OtoNova{% endblock %}
+
+{% block extra_css %}
+<style>
+.form-control, .form-select { font-family:'Inter',sans-serif; font-size:.875rem; border:1.5px solid var(--gray-200); border-radius:8px; padding:10px 14px; transition:var(--t); }
+.form-control:focus, .form-select:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.1); outline:none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section style="background:var(--gray-50);border-bottom:1px solid var(--gray-200);padding:2.5rem 0">
+  <div class="container">
+    <div class="section-label">İLETİŞİM</div>
+    <h1 class="section-title mb-0">Bize Ulaşın</h1>
+    <p class="section-sub mb-0">Sorularınız için formu doldurun, en kısa sürede yanıt verelim.</p>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row g-5">
+
+    <!-- Sol: İletişim Bilgileri -->
+    <div class="col-lg-4">
+      <div style="position:sticky;top:80px">
+        <h4 style="font-weight:700;color:var(--navy);margin-bottom:1.5rem">İletişim Bilgileri</h4>
+
+        <div class="d-flex gap-3 align-items-start mb-3">
+          <div style="width:44px;height:44px;background:var(--blue-light);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="bi bi-telephone-fill text-primary"></i>
+          </div>
+          <div>
+            <div style="font-size:.75rem;color:var(--gray-400);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Telefon</div>
+            <div style="font-size:.9rem;color:var(--navy);font-weight:600">+90 212 000 00 00</div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-3 align-items-start mb-3">
+          <div style="width:44px;height:44px;background:var(--blue-light);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="bi bi-envelope-fill text-primary"></i>
+          </div>
+          <div>
+            <div style="font-size:.75rem;color:var(--gray-400);font-weight:700;text-transform:uppercase;letter-spacing:.5px">E-posta</div>
+            <div style="font-size:.9rem;color:var(--navy);font-weight:600">info@otonova.com.tr</div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-3 align-items-start mb-3">
+          <div style="width:44px;height:44px;background:var(--blue-light);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="bi bi-geo-alt-fill text-primary"></i>
+          </div>
+          <div>
+            <div style="font-size:.75rem;color:var(--gray-400);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Adres</div>
+            <div style="font-size:.9rem;color:var(--navy);font-weight:600">İstanbul, Türkiye</div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-3 align-items-start">
+          <div style="width:44px;height:44px;background:var(--blue-light);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <i class="bi bi-clock-fill text-primary"></i>
+          </div>
+          <div>
+            <div style="font-size:.75rem;color:var(--gray-400);font-weight:700;text-transform:uppercase;letter-spacing:.5px">Çalışma Saatleri</div>
+            <div style="font-size:.9rem;color:var(--navy);font-weight:600">Pzt–Cum: 09:00–18:00</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Sağ: Form -->
+    <div class="col-lg-8">
+      <div style="background:var(--card-bg);border:1px solid var(--gray-200);border-radius:var(--radius);padding:2rem">
+        <h4 style="font-weight:700;color:var(--navy);margin-bottom:1.5rem">Mesaj Gönderin</h4>
+        {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} py-2 mb-3"
+             style="font-size:.85rem;border-radius:8px">
+          <i class="bi bi-{% if message.tags == 'error' %}exclamation-triangle{% else %}check-circle{% endif %} me-2"></i>{{ message }}
+        </div>
+        {% endfor %}
+        <form method="post" novalidate>
+          {% csrf_token %}
+          <div class="row g-3">
+            <div class="col-md-6">
+              <label class="search-field-label mb-1">Ad Soyad *</label>
+              <input type="text" name="ad_soyad" required minlength="3"
+                     value="{% if user.is_authenticated %}{{ user.get_full_name }}{% endif %}"
+                     class="form-control{% if form.ad_soyad.errors %} is-invalid{% endif %}">
+              {% if form.ad_soyad.errors %}<div class="invalid-feedback">{{ form.ad_soyad.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="search-field-label mb-1">E-posta *</label>
+              <input type="email" name="email" required
+                     value="{% if user.is_authenticated %}{{ user.email }}{% endif %}"
+                     class="form-control{% if form.email.errors %} is-invalid{% endif %}">
+              {% if form.email.errors %}<div class="invalid-feedback">{{ form.email.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="search-field-label mb-1">Telefon <span style="font-weight:400;color:var(--gray-400)">(isteğe bağlı)</span></label>
+              <input type="tel" name="telefon" placeholder="05XX XXX XX XX"
+                     class="form-control{% if form.telefon.errors %} is-invalid{% endif %}">
+              {% if form.telefon.errors %}<div class="invalid-feedback">{{ form.telefon.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-md-6">
+              <label class="search-field-label mb-1">Konu *</label>
+              <select name="konu" required class="form-select">
+                <option value="genel">Genel Soru</option>
+                <option value="teknik">Teknik Destek</option>
+                <option value="ilan">İlan Sorunu</option>
+                <option value="odeme">Ödeme Sorunu</option>
+                <option value="diger">Diğer</option>
+              </select>
+            </div>
+            <div class="col-12">
+              <label class="search-field-label mb-1">
+                Mesaj * <span id="mesaj-count" style="font-weight:400;color:var(--gray-400);font-size:.75rem">(0/2000)</span>
+              </label>
+              <textarea name="mesaj" rows="6" required minlength="10" maxlength="2000"
+                        placeholder="Mesajınızı buraya yazın..."
+                        oninput="document.getElementById('mesaj-count').textContent='('+this.value.length+'/2000)'"
+                        class="form-control{% if form.mesaj.errors %} is-invalid{% endif %}"></textarea>
+              {% if form.mesaj.errors %}<div class="invalid-feedback">{{ form.mesaj.errors.0 }}</div>{% endif %}
+            </div>
+            <div class="col-12">
+              <button type="submit" class="btn-primary-p">
+                <i class="bi bi-send me-1"></i>Mesajı Gönder
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>
+{% endblock %}

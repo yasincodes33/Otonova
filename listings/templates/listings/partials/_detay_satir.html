@@ -1,0 +1,6 @@
+{% if deger %}
+<div class="col-6" style="padding:.65rem 1.25rem;border-bottom:1px solid var(--gray-100)">
+  <div style="font-size:.72rem;color:var(--gray-400);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-bottom:2px">{{ etiket }}</div>
+  <div style="font-size:.9rem;color:var(--navy);font-weight:600">{{ deger }}{% if suffix %}{{ suffix }}{% endif %}</div>
+</div>
+{% endif %}

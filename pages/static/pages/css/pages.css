@@ -1,0 +1,167 @@
+/* ══════════════════════════════════════════════════════════════
+   PAGES APP — Hero, Search, Trust, AI-CTA, Hakkımızda
+   pages/static/pages/css/pages.css
+   ══════════════════════════════════════════════════════════════ */
+
+/* ── Hero Section ── */
+.hero-section {
+  min-height: 88vh;
+  background:
+    linear-gradient(160deg, rgba(4,3,8,.92) 0%, rgba(10,8,16,.85) 50%, rgba(5,5,12,.92) 100%),
+    url('https://images.pexels.com/photos/3802510/pexels-photo-3802510.jpeg?auto=compress&cs=tinysrgb&w=1920')
+    center / cover no-repeat;
+  display: flex;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(232,152,12,.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,152,12,.035) 1px, transparent 1px);
+  background-size: 64px 64px;
+  pointer-events: none;
+}
+.hero-section::after {
+  content: '';
+  position: absolute;
+  width: 1000px; height: 700px;
+  background: radial-gradient(ellipse, rgba(232,152,12,.1) 0%, transparent 60%);
+  bottom: -200px; right: -300px;
+  pointer-events: none;
+}
+.hero-headline {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-weight: 900;
+  font-size: clamp(3.2rem, 9vw, 7rem);
+  letter-spacing: -1px;
+  line-height: .92;
+  color: var(--snow);
+  text-transform: uppercase;
+}
+.hero-headline .accent        { color: var(--amber); }
+.hero-headline .outline       { -webkit-text-stroke: 2px var(--amber); color: transparent; }
+.hero-headline .outline-electric { -webkit-text-stroke: 2px var(--electric); color: transparent; }
+
+/* Staggered hero animations */
+@keyframes revealUp  { from { opacity:0; transform: translateY(40px); } to { opacity:1; transform: translateY(0); } }
+@keyframes fadeIn    { from { opacity:0; } to { opacity:1; } }
+@keyframes slideRight{ from { opacity:0; transform: translateX(-20px); } to { opacity:1; transform: translateX(0); } }
+.anim-1    { animation: revealUp  .75s cubic-bezier(.16,1,.3,1)      both; }
+.anim-2    { animation: revealUp  .75s cubic-bezier(.16,1,.3,1) .12s both; }
+.anim-3    { animation: revealUp  .75s cubic-bezier(.16,1,.3,1) .24s both; }
+.anim-4    { animation: revealUp  .75s cubic-bezier(.16,1,.3,1) .36s both; }
+.anim-5    { animation: revealUp  .75s cubic-bezier(.16,1,.3,1) .5s  both; }
+.anim-fade { animation: fadeIn    .9s  ease .6s both; }
+
+/* ── Search Bar ── */
+.search-bar {
+  background: var(--steel);
+  border-radius: var(--radius-lg);
+  padding: 1.1rem 1.5rem;
+  box-shadow: 0 24px 64px rgba(0,0,0,.45);
+  border: 1px solid var(--wire);
+}
+[data-theme="light"] .search-bar { box-shadow: 0 20px 60px rgba(0,0,0,.1); }
+.search-field { position: relative; }
+.search-field-label {
+  font-size: .58rem; font-weight: 600;
+  text-transform: uppercase; letter-spacing: 1.8px;
+  color: var(--mist); margin-bottom: 2px; display: block;
+  font-family: 'JetBrains Mono', monospace;
+}
+.search-field select,
+.search-field input {
+  border: none; outline: none;
+  font-size: .875rem; font-weight: 500;
+  color: var(--navy); background: transparent;
+  width: 100%; padding: 0;
+  font-family: 'Barlow', sans-serif;
+  appearance: none; -webkit-appearance: none;
+  cursor: pointer;
+}
+.search-field select option { color: var(--snow); background: var(--carbon); }
+.search-field input::placeholder { color: var(--gray-400); font-weight: 400; }
+.search-sep { width:1px; background: var(--wire); align-self: stretch; margin: 0 4px; }
+
+/* ── Trust Cards ── */
+.trust-card {
+  background: var(--card-bg);
+  border: 1px solid var(--wire);
+  border-radius: var(--radius);
+  padding: 1.75rem 1.5rem;
+  text-align: center;
+  transition: var(--t);
+  position: relative; overflow: hidden;
+}
+.trust-card::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--amber), var(--amber-glow));
+  transform: scaleX(0); transform-origin: left;
+  transition: transform .35s cubic-bezier(.4,0,.2,1);
+}
+.trust-card:hover { border-color: var(--amber-border); transform: translateY(-4px); box-shadow: var(--shadow); }
+.trust-card:hover::after { transform: scaleX(1); }
+.trust-icon {
+  width: 52px; height: 52px;
+  background: var(--amber-dim); border: 1px solid var(--amber-border);
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.3rem; color: var(--amber);
+  margin: 0 auto 1rem;
+}
+.trust-num {
+  font-size: 1.7rem; font-weight: 900; color: var(--navy);
+  line-height: 1.1;
+  font-family: 'Barlow Condensed', sans-serif; letter-spacing: -.5px;
+}
+.trust-label { font-size: .82rem; color: var(--mist); margin-top: .25rem; }
+
+/* ── AI CTA Section ── */
+.ai-cta-section {
+  background: linear-gradient(135deg, #07070C 0%, #0F0F18 100%);
+  border-radius: var(--radius-lg);
+  padding: 3.5rem 3rem;
+  position: relative; overflow: hidden;
+  border: 1px solid var(--wire);
+}
+.ai-cta-section::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(61,142,255,.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(61,142,255,.04) 1px, transparent 1px);
+  background-size: 44px 44px; pointer-events: none;
+}
+.ai-cta-section::after {
+  content: '';
+  position: absolute;
+  width: 600px; height: 600px;
+  background: radial-gradient(circle, rgba(61,142,255,.14) 0%, transparent 70%);
+  right: -100px; top: -100px; border-radius: 50%; pointer-events: none;
+}
+.ai-input-group {
+  display: flex;
+  background: rgba(255,255,255,.05);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radius-sm); overflow: hidden; transition: var(--t);
+}
+.ai-input-group:focus-within { border-color: var(--electric-border); box-shadow: 0 0 0 3px var(--electric-dim); }
+.ai-input-group select,
+.ai-input-group input {
+  flex: 1; background: transparent; border: none; outline: none;
+  color: #fff; font-family: 'Barlow', sans-serif;
+  font-size: .875rem; padding: .85rem 1rem;
+}
+.ai-input-group select option { background: #1a1a22; color: #fff; }
+.ai-input-group input::placeholder { color: rgba(255,255,255,.32); }
+
+/* ── Responsive ── */
+@media (max-width: 992px) {
+  .hero-section    { min-height: auto; padding: 5rem 0 4rem; }
+  .ai-cta-section  { border-radius: var(--radius); padding: 2.5rem 1.5rem; }
+}

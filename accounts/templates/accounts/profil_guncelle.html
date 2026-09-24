@@ -1,0 +1,120 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Profili Düzenle — OtoNova{% endblock %}
+
+{% block content %}
+<div class="container py-5" style="max-width:700px">
+  <div class="mb-4">
+    <a href="{% url 'accounts:profil' %}" style="font-size:.85rem;color:var(--blue);text-decoration:none">
+      <i class="bi bi-arrow-left me-1"></i> Profilime Dön
+    </a>
+    <h1 style="font-size:1.5rem;font-weight:800;color:var(--navy);margin-top:.75rem">Profili Düzenle</h1>
+  </div>
+
+  {% for message in messages %}
+  <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} py-2 mb-4" style="font-size:.85rem;border-radius:var(--radius-sm)">
+    <i class="bi bi-{% if message.tags == 'error' %}exclamation-triangle{% else %}check-circle{% endif %} me-2"></i>{{ message }}
+  </div>
+  {% endfor %}
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <!-- Kişisel Bilgiler -->
+    <div style="background:var(--card-bg);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem">
+      <h5 style="font-weight:700;color:var(--navy);margin-bottom:1.25rem">
+        <i class="bi bi-person me-2 text-primary"></i>Kişisel Bilgiler
+      </h5>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Ad</label>
+          <input type="text" name="first_name" class="form-control" value="{{ request.user.first_name }}" placeholder="Adınız">
+        </div>
+        <div class="col-md-6">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Soyad</label>
+          <input type="text" name="last_name" class="form-control" value="{{ request.user.last_name }}" placeholder="Soyadınız">
+        </div>
+        <div class="col-md-6">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Telefon</label>
+          <input type="tel" name="telefon" class="form-control" value="{{ request.user.profil.telefon|default:'' }}" placeholder="05XX XXX XX XX">
+        </div>
+        <div class="col-md-6">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Şehir</label>
+          <input type="text" name="sehir" class="form-control" list="sehir-list"
+                 value="{{ request.user.profil.sehir|default:'' }}" placeholder="İstanbul" autocomplete="off">
+          <datalist id="sehir-list">
+            {% for s in sehirler %}<option value="{{ s }}">{% endfor %}
+          </datalist>
+        </div>
+        <div class="col-12">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">
+            Hakkımda
+            <span id="bio-count" style="font-weight:400;color:var(--gray-400);font-size:.75rem">
+              ({{ request.user.profil.biyografi|default:''|length }}/500)
+            </span>
+          </label>
+          <textarea name="biyografi" id="biyografi" class="form-control" rows="3"
+                    maxlength="500"
+                    placeholder="Kendinizden kısaca bahsedin..."
+                    oninput="document.getElementById('bio-count').textContent='('+this.value.length+'/500)'">{{ request.user.profil.biyografi|default:'' }}</textarea>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profil Fotoğrafı -->
+    <div style="background:var(--card-bg);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem">
+      <h5 style="font-weight:700;color:var(--navy);margin-bottom:1.25rem">
+        <i class="bi bi-image me-2 text-primary"></i>Profil Fotoğrafı
+      </h5>
+      <div class="d-flex align-items-center gap-3 flex-wrap">
+        {% if request.user.profil.avatar %}
+        <img src="{{ request.user.profil.avatar.url }}" alt="Mevcut avatar"
+             style="width:72px;height:72px;object-fit:cover;border-radius:50%;border:2px solid var(--gray-200)">
+        {% else %}
+        <div style="width:72px;height:72px;background:var(--blue-light);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:1.8rem;color:var(--blue)">
+          <i class="bi bi-person-fill"></i>
+        </div>
+        {% endif %}
+        <div>
+          <input type="file" name="avatar" class="form-control" accept="image/*" style="max-width:300px">
+          <span style="font-size:.72rem;color:var(--gray-400);margin-top:4px;display:block">JPG veya PNG, max 5MB. 400×400 px'e küçültülür.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Şifre Değiştir -->
+    <div style="background:var(--card-bg);border:1px solid var(--gray-200);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem">
+      <h5 style="font-weight:700;color:var(--navy);margin-bottom:.5rem">
+        <i class="bi bi-lock me-2 text-primary"></i>Şifre Değiştir
+      </h5>
+      <p style="font-size:.8rem;color:var(--gray-400);margin-bottom:1.25rem">Boş bırakırsanız şifreniz değişmez.</p>
+      <div class="row g-3">
+        <div class="col-12">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Mevcut Şifre</label>
+          <input type="password" name="eski_sifre" class="form-control" placeholder="Mevcut şifreniz" autocomplete="current-password">
+        </div>
+        <div class="col-md-6">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Yeni Şifre</label>
+          <input type="password" name="yeni_sifre" class="form-control" placeholder="En az 8 karakter" minlength="8" autocomplete="new-password">
+        </div>
+        <div class="col-md-6">
+          <label style="font-size:.8rem;font-weight:600;color:var(--gray-600);display:block;margin-bottom:6px">Yeni Şifre (Tekrar)</label>
+          <input type="password" name="yeni_sifre2" class="form-control" placeholder="Şifrenizi tekrar girin" autocomplete="new-password">
+        </div>
+      </div>
+    </div>
+
+    <!-- Butonlar -->
+    <div class="d-flex gap-3">
+      <button type="submit" class="btn-primary-p" style="padding:.75rem 2rem">
+        <i class="bi bi-check-lg"></i> Kaydet
+      </button>
+      <a href="{% url 'accounts:profil' %}" class="btn-outline-p" style="padding:.75rem 1.5rem">
+        İptal
+      </a>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

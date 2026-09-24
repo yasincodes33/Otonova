@@ -1,0 +1,121 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}Hakkımızda — OtoNova{% endblock %}
+{% block meta_description %}OtoNova hakkında — AI destekli araç platformumuzun misyonu, vizyonu ve ekibi.{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section style="position:relative;overflow:hidden;min-height:380px;display:flex;align-items:center;background:linear-gradient(160deg,rgba(3,2,6,.70) 0%,rgba(8,6,14,.58) 50%,rgba(4,4,10,.70) 100%),url('{% static "images/Hakkimizda_hero.jpg" %}') center/cover no-repeat;padding:5rem 0 4rem">
+  <div class="container text-center" style="position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;gap:.5rem;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:4px;padding:.35rem 1rem;font-size:.6rem;font-weight:700;color:var(--amber);letter-spacing:2.5px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:1.5rem">
+      <i class="bi bi-buildings"></i> HAKKIMIZDA
+    </div>
+    <h1 style="font-size:clamp(2rem,5vw,3rem);font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.15;margin-bottom:1.25rem;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase">
+      Türkiye'nin<br>Akıllı Araç Platformu
+    </h1>
+    <p style="font-size:1.05rem;color:rgba(255,255,255,.65);max-width:600px;margin:0 auto;line-height:1.8">
+      OtoNova, yapay zeka destekli fiyat tahmini ve şeffaf ilan sistemiyle ikinci el araç alım-satımını yeniden tanımlıyor.
+    </p>
+  </div>
+</section>
+
+<!-- Stats -->
+<section style="background:var(--card-bg);border-bottom:1px solid var(--border);padding:2.5rem 0">
+  <div class="container">
+    <div class="row g-4 text-center">
+      {% for sayi, birim, aciklama in stats %}
+      <div class="col-6 col-md-3">
+        <div style="font-size:2rem;font-weight:900;color:var(--blue);line-height:1">{{ sayi }}</div>
+        <div style="font-size:.75rem;font-weight:700;color:var(--blue);opacity:.7">{{ birim }}</div>
+        <div style="font-size:.82rem;color:var(--gray-400);margin-top:.3rem">{{ aciklama }}</div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- Hikaye -->
+<section style="padding:5rem 0">
+  <div class="container">
+    <div class="row g-5 align-items-center">
+      <div class="col-lg-6">
+        <div class="section-label">HİKAYEMİZ</div>
+        <h2 class="section-title mb-4">Güveni ve Şeffaflığı Merkeze Aldık</h2>
+        <p style="color:var(--gray-500);font-size:.95rem;line-height:1.9;margin-bottom:1rem">
+          İkinci el araç pazarında yaşanan bilgi asimetrisini fark ettik. Alıcılar fiyatın adil olup olmadığını bilemezken, satıcılar ilanlarının gerçek değerini ölçemiyordu.
+        </p>
+        <p style="color:var(--gray-500);font-size:.95rem;line-height:1.9;margin-bottom:1rem">
+          Bu sorunu çözmek için 2024 yılında OtoNova'yı kurduk. Binlerce araç ilanından öğrenen makine öğrenmesi modelimiz, aracın yaşına, kilometresine, hasar durumuna ve piyasa koşullarına göre gerçek zamanlı fiyat tahmini yapıyor.
+        </p>
+        <p style="color:var(--gray-500);font-size:.95rem;line-height:1.9">
+          Sonuç: her iki taraf için daha adil, daha hızlı ve daha güvenli bir alışveriş deneyimi.
+        </p>
+      </div>
+      <div class="col-lg-6">
+        <div class="row g-3 align-items-stretch">
+          <div class="col-md-5">
+            <img src="{% static 'images/Hakkimizda_hikaye.jpg' %}" alt="OtoNova Hikayemiz"
+                 style="width:100%;height:100%;min-height:280px;max-height:500px;object-fit:cover;border-radius:14px;display:block">
+          </div>
+          <div class="col-md-7">
+            <div class="row g-3">
+              {% for ikon, baslik, metin in ozellikler %}
+              <div class="col-6">
+                <div style="background:var(--gray-50);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;height:100%">
+                  <div style="width:40px;height:40px;background:var(--blue-light);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1.2rem;color:var(--blue);margin-bottom:.75rem">
+                    <i class="bi bi-{{ ikon }}"></i>
+                  </div>
+                  <div style="font-weight:700;font-size:.83rem;color:var(--navy);margin-bottom:.3rem">{{ baslik }}</div>
+                  <div style="font-size:.74rem;color:var(--gray-400);line-height:1.6">{{ metin }}</div>
+                </div>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Teknoloji -->
+<section style="background:var(--gray-50);border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:5rem 0">
+  <div class="container">
+    <div class="text-center mb-5">
+      <div class="section-label">TEKNOLOJİ</div>
+      <h2 class="section-title">AI Motorumuz Nasıl Çalışır?</h2>
+    </div>
+    <div class="row g-4">
+      {% for adim, baslik, metin in adimlar %}
+      <div class="col-md-4">
+        <div style="background:var(--card-bg);border:1px solid var(--border);border-radius:var(--radius);padding:2rem;height:100%;position:relative">
+          <div style="width:36px;height:36px;background:var(--blue);border-radius:10px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:.85rem;font-weight:800;margin-bottom:1.1rem">{{ adim }}</div>
+          <h4 style="font-weight:700;font-size:.95rem;color:var(--navy);margin-bottom:.6rem">{{ baslik }}</h4>
+          <p style="font-size:.83rem;color:var(--gray-400);line-height:1.7;margin:0">{{ metin }}</p>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section style="padding:5rem 0">
+  <div class="container">
+    <div style="background:linear-gradient(135deg,#0f172a,#1a2e4f);border-radius:var(--radius-lg);padding:3.5rem;text-align:center;position:relative;overflow:hidden">
+      <div style="position:absolute;width:400px;height:400px;background:radial-gradient(circle,rgba(37,99,235,.2) 0%,transparent 70%);right:-80px;top:-80px;border-radius:50%;pointer-events:none"></div>
+      <div style="position:relative;z-index:1">
+        <i class="bi bi-cpu" style="font-size:2.5rem;color:#3b82f6;margin-bottom:1rem;display:block"></i>
+        <h2 style="font-size:1.75rem;font-weight:800;color:#fff;margin-bottom:.75rem">Aracınızın Değerini Öğrenin</h2>
+        <p style="color:#94a3b8;font-size:.95rem;margin-bottom:2rem;max-width:500px;margin-left:auto;margin-right:auto">AI modelimiz, binlerce ilanı analiz ederek aracınız için doğru fiyatı saniyeler içinde hesaplar.</p>
+        <a href="{% url 'predictions:tahmin' %}" class="btn-primary-p" style="font-size:1rem;padding:.85rem 2.5rem">
+          <i class="bi bi-cpu me-2"></i>Fiyat Tahmini Yap
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

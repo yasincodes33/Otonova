@@ -1,0 +1,381 @@
+{% extends "layout.html" %}
+{% load static %}
+{% load otonova_filters %}
+
+{% block title %}OtoNova | Akıllı Araç Alım Satım Platformu{% endblock %}
+{% block meta_description %}Türkiye'nin AI destekli akıllı ikinci el araç platformu. Güvenli alışveriş, şeffaf fiyatlama, binlerce ilan.{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'pages/css/pages.css' %}">
+<link rel="stylesheet" href="{% static 'listings/css/listings.css' %}">
+<style>
+  .search-btn-wrap { flex-shrink: 0; }
+  .search-submit-btn { width: 100%; }
+  @media (min-width: 992px) {
+    .search-submit-btn { width: auto; min-width: 110px; }
+  }
+  .hero-section {
+    background:
+      linear-gradient(160deg, rgba(3,2,6,.65) 0%, rgba(8,6,14,.55) 50%, rgba(4,4,10,.65) 100%),
+      url("{% static 'images/Anasayfa.jpg' %}") center / cover no-repeat !important;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ═══════════════════════════ HERO ═══════════════════════════ -->
+<section class="hero-section">
+  <div class="container position-relative" style="z-index:2">
+    <div class="row justify-content-center text-center">
+      <div class="col-lg-9 col-xl-8">
+
+        <div class="anim-1 mb-4">
+          <span style="display:inline-flex;align-items:center;gap:.6rem;background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border);padding:.4rem 1.2rem;border-radius:4px;font-size:.62rem;font-weight:700;letter-spacing:3px;font-family:'JetBrains Mono',monospace;text-transform:uppercase">
+            <i class="bi bi-cpu-fill" style="font-size:.8rem"></i> AI DESTEKLI PLATFORM
+          </span>
+        </div>
+
+        <h1 class="hero-headline anim-2 mb-4">
+          Hayalindeki<br>
+          <span class="accent">Arabayı</span>&ensp;<span class="outline-electric">Bul</span>
+        </h1>
+
+        <p class="anim-3 mb-5" style="font-size:1.05rem;color:rgba(255,255,255,.5);max-width:500px;margin:0 auto 2rem;font-family:'Barlow',sans-serif;line-height:1.7">
+          Binlerce ilan arasından AI ile fiyat doğrulanmış aracınızı bulun ve güvenle satın alın.
+        </p>
+
+        <div class="anim-4 d-flex justify-content-center gap-3 mb-5 flex-wrap">
+          <a href="{% url 'listings:arabalar' %}" class="btn-primary-p" style="padding:.9rem 2.2rem;font-size:.88rem">
+            <i class="bi bi-search"></i> Araç Ara
+          </a>
+          <a href="{% url 'predictions:tahmin' %}" class="btn-outline-p" style="padding:.85rem 2.2rem;font-size:.88rem;border-color:rgba(255,255,255,.18);color:rgba(255,255,255,.75)">
+            <i class="bi bi-cpu"></i> Fiyat Tahmini
+          </a>
+        </div>
+
+        <div class="anim-5 d-flex justify-content-center align-items-center gap-4 flex-wrap">
+          <div style="text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1.25rem;font-weight:600;color:var(--amber);line-height:1.1">{{ toplam_ilan }}</div>
+            <div style="font-size:.62rem;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;margin-top:2px">Aktif İlan</div>
+          </div>
+          <div style="width:1px;height:32px;background:rgba(255,255,255,.1)"></div>
+          <div style="text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1.25rem;font-weight:600;color:var(--amber);line-height:1.1">{{ firsat_sayisi }}</div>
+            <div style="font-size:.62rem;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;margin-top:2px">Fırsat İlanı</div>
+          </div>
+          <div style="width:1px;height:32px;background:rgba(255,255,255,.1)"></div>
+          <div style="text-align:center">
+            <div style="font-family:'JetBrains Mono',monospace;font-size:1.25rem;font-weight:600;color:var(--electric);line-height:1.1">R²&thinsp;0.96</div>
+            <div style="font-size:.62rem;color:rgba(255,255,255,.35);letter-spacing:2px;text-transform:uppercase;margin-top:2px">AI Doğruluğu</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ SEARCH BAR ═══════════════════════════ -->
+<section class="py-0" style="background:var(--bg)">
+  <div class="container" style="margin-top:-40px;position:relative;z-index:10">
+    <form id="hero-search" action="{% url 'listings:arabalar' %}" method="get" class="search-bar">
+      <div class="d-flex align-items-center gap-2 flex-wrap flex-lg-nowrap">
+
+        <div class="search-field flex-grow-1" style="min-width:130px">
+          <span class="search-field-label">Marka</span>
+          <select name="marka" id="hero_marka" class="cs-select">
+            <option value="">Tüm markalar</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:130px">
+          <span class="search-field-label">Seri</span>
+          <select name="seri" id="hero_seri" class="cs-select">
+            <option value="">Tüm seriler</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:130px">
+          <span class="search-field-label">Fiyat Aralığı</span>
+          <select name="fiyat_aralik" class="cs-select">
+            <option value="">Tümü</option>
+            <option value="0-500000">0 – 500.000 TL</option>
+            <option value="500000-1000000">500K – 1M TL</option>
+            <option value="1000000-2000000">1M – 2M TL</option>
+            <option value="2000000-">2M+ TL</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:110px">
+          <span class="search-field-label">Şehir</span>
+          <select name="sehir" class="cs-select">
+            <option value="">Tümü</option>
+            <option value="İstanbul">İstanbul</option>
+            <option value="Ankara">Ankara</option>
+            <option value="İzmir">İzmir</option>
+            <option value="Bursa">Bursa</option>
+            <option value="Antalya">Antalya</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:90px">
+          <span class="search-field-label">Yıl (Min)</span>
+          <select name="yil_min" class="cs-select">
+            <option value="">Tümü</option>
+            <option value="2024">2024+</option>
+            <option value="2022">2022+</option>
+            <option value="2020">2020+</option>
+            <option value="2018">2018+</option>
+            <option value="2015">2015+</option>
+            <option value="2010">2010+</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:100px">
+          <span class="search-field-label">Kilometre</span>
+          <select name="km_max" class="cs-select">
+            <option value="">Tümü</option>
+            <option value="50000">0 – 50.000</option>
+            <option value="150000">50K – 150K</option>
+            <option value="300000">150K – 300K</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:100px">
+          <span class="search-field-label">Vites</span>
+          <select name="vites" class="cs-select">
+            <option value="">Tümü</option>
+            <option value="Otomatik">Otomatik</option>
+            <option value="Düz">Düz (Manuel)</option>
+            <option value="Yarı Otomatik">Yarı Otomatik</option>
+          </select>
+        </div>
+        <div class="search-sep d-none d-lg-block"></div>
+
+        <div class="search-field flex-grow-1" style="min-width:100px">
+          <span class="search-field-label">Yakıt</span>
+          <select name="yakit" class="cs-select">
+            <option value="">Tümü</option>
+            <option value="Benzin">Benzin</option>
+            <option value="Dizel">Dizel</option>
+            <option value="Elektrik">Elektrik</option>
+            <option value="Hibrit">Hibrit</option>
+            <option value="LPG & Benzin">LPG</option>
+          </select>
+        </div>
+
+        <div class="search-btn-wrap mt-2 mt-lg-0 ms-lg-2">
+          <button type="submit" class="btn-primary-p justify-content-center search-submit-btn" style="padding:.85rem 1.75rem;border-radius:10px;white-space:nowrap">
+            <i class="bi bi-search"></i> Ara
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ TRUST SECTION ═══════════════════════════ -->
+<section class="py-5" style="background:var(--gray-50)">
+  <div class="container py-3">
+    <div class="row g-4">
+
+      <div class="col-6 col-lg-3">
+        <div class="trust-card">
+          <div class="trust-icon"><i class="bi bi-car-front-fill"></i></div>
+          <div class="trust-num">{{ toplam_ilan }}</div>
+          <div class="trust-label">Aktif İlan</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="trust-card">
+          <div class="trust-icon"><i class="bi bi-stars"></i></div>
+          <div class="trust-num">{{ firsat_sayisi }}</div>
+          <div class="trust-label">Fırsat İlanı</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="trust-card">
+          <div class="trust-icon"><i class="bi bi-cpu-fill"></i></div>
+          <div class="trust-num">{{ ai_hesaplanan }}</div>
+          <div class="trust-label">AI Fiyat Analizi</div>
+        </div>
+      </div>
+
+      <div class="col-6 col-lg-3">
+        <div class="trust-card">
+          <div class="trust-icon"><i class="bi bi-shield-fill-check"></i></div>
+          <div class="trust-num">%98</div>
+          <div class="trust-label">Güvenli İşlem Oranı</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ FEATURED CARS ═══════════════════════════ -->
+<section class="py-5 py-lg-6" style="background:var(--bg)">
+  <div class="container py-2">
+
+    <div class="d-flex align-items-end justify-content-between mb-5 flex-wrap gap-3">
+      <div>
+        <div class="section-label">ARAÇLAR</div>
+        <div class="section-title">Öne Çıkan Araçlar</div>
+        <p class="section-sub">Güvenilir satıcılardan seçilmiş, AI ile fiyat doğrulanmış ilanlar.</p>
+      </div>
+      <a href="{% url 'listings:arabalar' %}" class="btn-outline-p flex-shrink-0">
+        Tümünü Gör <i class="bi bi-arrow-right"></i>
+      </a>
+    </div>
+
+    <div class="row g-4">
+      {% for ilan in one_cikan_ilanlar %}
+      <div class="col-sm-6 col-xl-3">
+        <div class="car-card">
+          <div class="car-img-wrap">
+            {% with fotolar=ilan.fotolar.all %}
+            {% if fotolar %}
+              <img src="{{ fotolar.0.foto.url }}" alt="{{ ilan.baslik }}" class="car-img" loading="lazy">
+            {% else %}
+              <div class="car-img d-flex align-items-center justify-content-center" style="background:var(--gray-100)">
+                <i class="bi bi-car-front" style="font-size:3rem;color:var(--gray-400)"></i>
+              </div>
+            {% endif %}
+            {% endwith %}
+            <div class="car-badge-wrap">
+              {% if ilan.firsat_skoru and ilan.firsat_skoru >= 70 %}
+                <span class="car-badge car-badge-green"><i class="bi bi-stars me-1"></i>Fırsat</span>
+              {% elif ilan.tramer_kategori == 'yok' %}
+                <span class="car-badge car-badge-green">Hasarsız</span>
+              {% else %}
+                <span class="car-badge car-badge-blue">Yeni İlan</span>
+              {% endif %}
+            </div>
+            <button class="car-fav" title="Favorilere Ekle"><i class="bi bi-heart"></i></button>
+          </div>
+          <div class="car-body">
+            <div class="car-title">{{ ilan.marka }} {{ ilan.seri }} {{ ilan.model }}</div>
+            <div class="car-meta">{{ ilan.yil }}&nbsp;·&nbsp;{{ ilan.yakit_tipi }}&nbsp;·&nbsp;{{ ilan.vites_tipi }}&nbsp;·&nbsp;{{ ilan.kilometre|floatformat:0 }} km</div>
+            <div class="d-flex align-items-center flex-wrap gap-1">
+              <span class="car-price">{{ ilan.fiyat|para }} TL</span>
+              {% if ilan.ai_tahmin_fiyat %}
+                {% if ilan.firsat_skoru and ilan.firsat_skoru >= 70 %}
+                  <span class="car-ai-score" style="background:rgba(5,150,105,.12);color:#059669;border-color:rgba(5,150,105,.25)"><i class="bi bi-stars"></i> Fırsat</span>
+                {% elif ilan.fiyat <= ilan.ai_tahmin_fiyat %}
+                  <span class="car-ai-score"><i class="bi bi-cpu"></i> AI Uygun</span>
+                {% else %}
+                  <span class="car-ai-score" style="background:rgba(217,119,6,.1);color:#d97706;border-color:rgba(217,119,6,.25)"><i class="bi bi-cpu"></i> AI Fiyatlı</span>
+                {% endif %}
+              {% else %}
+                <span class="car-ai-score"><i class="bi bi-cpu"></i> AI Fiyatlı</span>
+              {% endif %}
+            </div>
+            <div class="mt-1" style="font-size:.78rem;color:var(--gray-400)">
+              <i class="bi bi-geo-alt me-1"></i>{{ ilan.sehir }}
+            </div>
+          </div>
+          <div class="car-footer">
+            <a href="{% url 'listings:ilan_detay' ilan.slug %}" class="btn-card-primary">Detayları Gör</a>
+            <a href="{% url 'predictions:tahmin' %}" class="btn-card-ghost"><i class="bi bi-cpu"></i></a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════ AI SECTION ═══════════════════════════ -->
+<section class="py-5 py-lg-6" style="background:var(--gray-50)">
+  <div class="container py-2">
+    <div class="ai-cta-section">
+      <div class="row align-items-center g-5 position-relative" style="z-index:2">
+
+        <div class="col-lg-6">
+          <div class="mb-3">
+            <span style="display:inline-flex;align-items:center;gap:.5rem;background:var(--electric-dim);color:var(--electric);border:1px solid var(--electric-border);padding:.35rem 1rem;border-radius:4px;font-size:.6rem;font-weight:700;letter-spacing:2.5px;font-family:'JetBrains Mono',monospace;text-transform:uppercase">
+              <i class="bi bi-cpu-fill"></i> YAPAY ZEKA
+            </span>
+          </div>
+          <h2 class="text-white mb-3" style="font-family:'Barlow Condensed',sans-serif;font-weight:900;font-size:clamp(2rem,4vw,3rem);letter-spacing:-.5px;line-height:1.0;text-transform:uppercase">
+            Aracınızın Gerçek<br><span style="color:var(--electric)">Değerini</span> Öğrenin
+          </h2>
+          <p style="color:rgba(255,255,255,.5);font-size:.92rem;line-height:1.75;max-width:400px;font-family:'Barlow',sans-serif">
+            Random Forest modelimiz binlerce gerçek satış verisini analiz ederek saniyeler içinde piyasa fiyat tahmini üretir.
+          </p>
+          <div class="d-flex gap-5 mt-4 flex-wrap">
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;color:var(--electric);font-size:1.5rem;font-weight:600;line-height:1.1">%96</div>
+              <div style="color:rgba(255,255,255,.4);font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px">Model Doğruluğu</div>
+            </div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;color:var(--electric);font-size:1.5rem;font-weight:600;line-height:1.1">&lt;2sn</div>
+              <div style="color:rgba(255,255,255,.4);font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px">Tahmin Süresi</div>
+            </div>
+            <div>
+              <div style="font-family:'JetBrains Mono',monospace;color:var(--electric);font-size:1.5rem;font-weight:600;line-height:1.1">40K+</div>
+              <div style="color:rgba(255,255,255,.4);font-size:.68rem;letter-spacing:1.5px;text-transform:uppercase;margin-top:3px">Eğitim Verisi</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-lg-6">
+          <div style="background:rgba(255,255,255,.06);border:1.5px solid rgba(255,255,255,.1);border-radius:16px;padding:2rem">
+            <p class="text-white fw-semibold mb-4" style="font-size:.9rem">Hızlı Fiyat Tahmini</p>
+            <div class="row g-3 mb-3">
+              <div class="col-6">
+                <label style="color:rgba(255,255,255,.5);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Marka</label>
+                <div class="ai-input-group">
+                  <select id="ai_marka" style="border-radius:10px">
+                    <option value="">Seçin...</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-6">
+                <label style="color:rgba(255,255,255,.5);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Seri</label>
+                <div class="ai-input-group">
+                  <select id="ai_seri" style="border-radius:10px">
+                    <option value="">Önce marka seçin</option>
+                  </select>
+                </div>
+              </div>
+              <div class="col-6">
+                <label style="color:rgba(255,255,255,.5);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Yıl</label>
+                <div class="ai-input-group">
+                  <select id="ai_yil" style="border-radius:10px"></select>
+                </div>
+              </div>
+              <div class="col-6">
+                <label style="color:rgba(255,255,255,.5);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:1px;display:block;margin-bottom:6px">Kilometre</label>
+                <div class="ai-input-group">
+                  <input type="number" id="ai_km" placeholder="Örn: 75000">
+                </div>
+              </div>
+            </div>
+            <button type="button" id="ai-tahmin-btn" class="btn-primary-p w-100 justify-content-center"
+                    style="padding:.9rem;border-radius:10px;font-size:.9rem;border:none;cursor:pointer">
+              <i class="bi bi-cpu"></i> AI ile Tahmin Et
+            </button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>window.ANASAYFA_CFG = { msMap: {{ marka_seri_json|safe }} };</script>
+<script src="{% static 'pages/js/anasayfa.js' %}"></script>
+{% endblock %}

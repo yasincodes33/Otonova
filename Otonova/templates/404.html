@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}Sayfa Bulunamadı — OtoNova{% endblock %}
+
+{% block content %}
+<div class="container py-5 text-center" style="min-height:60vh;display:flex;flex-direction:column;align-items:center;justify-content:center">
+  <div style="font-size:6rem;font-weight:900;color:var(--blue);line-height:1;margin-bottom:.5rem">404</div>
+  <i class="bi bi-exclamation-triangle" style="font-size:2.5rem;color:var(--gray-300);margin-bottom:1rem"></i>
+  <h1 style="font-size:1.6rem;font-weight:800;color:var(--navy);margin-bottom:.75rem">Sayfa Bulunamadı</h1>
+  <p style="color:var(--gray-400);font-size:.95rem;max-width:420px;margin-bottom:2rem">
+    Aradığınız sayfa kaldırılmış, taşınmış veya hiç var olmamış olabilir.
+  </p>
+  <div class="d-flex gap-3 flex-wrap justify-content-center">
+    <a href="{% url 'pages:index' %}" class="btn-primary-p" style="padding:.75rem 1.5rem">
+      <i class="bi bi-house"></i> Ana Sayfaya Dön
+    </a>
+    <a href="{% url 'listings:arabalar' %}" class="btn-outline-p" style="padding:.75rem 1.5rem">
+      <i class="bi bi-car-front"></i> İlanlara Bak
+    </a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,258 @@
+{% extends "layout.html" %}
+{% load static %}
+
+{% block title %}İlan Ver — OtoNova{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'listings/css/listings.css' %}">
+<style>
+.form-kart { background:var(--card-bg); border:1px solid var(--gray-200); border-radius:var(--radius); margin-bottom:1.5rem; }
+.form-kart-header { padding:1rem 1.5rem; border-bottom:1px solid var(--gray-100); font-weight:700; font-size:.9rem; color:var(--navy); }
+.form-kart-body { padding:1.5rem; }
+.form-select, .form-control { font-family:'Inter',sans-serif; font-size:.875rem; border:1.5px solid var(--gray-200); border-radius:8px; padding:9px 12px; transition:var(--t); }
+.form-select:focus, .form-control:focus { border-color:var(--blue); box-shadow:0 0 0 3px rgba(37,99,235,.1); outline:none; }
+</style>
+{% endblock %}
+
+{% block content %}
+<section style="position:relative;overflow:hidden;min-height:420px;display:flex;align-items:center;background:linear-gradient(160deg,rgba(3,2,6,.68) 0%,rgba(8,6,14,.58) 50%,rgba(4,4,10,.68) 100%),url('{% static "images/Arac_sat.jpg" %}') center/cover no-repeat;padding:4rem 0 3.5rem">
+  <div class="container" style="position:relative;z-index:1">
+    <div style="display:inline-flex;align-items:center;gap:.5rem;background:var(--amber-dim);border:1px solid var(--amber-border);border-radius:4px;padding:.35rem 1rem;font-size:.6rem;font-weight:700;color:var(--amber);letter-spacing:2.5px;font-family:'JetBrains Mono',monospace;text-transform:uppercase;margin-bottom:1rem">
+      <i class="bi bi-car-front-fill"></i> İLAN VER
+    </div>
+    <h1 style="font-size:clamp(1.8rem,4vw,2.6rem);font-weight:900;color:#fff;letter-spacing:-1px;line-height:1.1;margin-bottom:.75rem;font-family:'Barlow Condensed',sans-serif;text-transform:uppercase">
+      Aracınızı<br>Satışa Çıkarın
+    </h1>
+    <p style="font-size:.95rem;color:rgba(255,255,255,.6);margin:0;line-height:1.7;max-width:480px">
+      Formu doldurun, ilanınız incelendikten sonra yayınlanır.
+    </p>
+  </div>
+</section>
+
+<div class="container py-5">
+  <div class="row justify-content-center">
+    <div class="col-lg-9">
+
+      {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}success{% endif %} py-2 mb-4" style="font-size:.85rem;border-radius:var(--radius-sm)">
+        <i class="bi bi-{% if message.tags == 'error' %}exclamation-triangle{% else %}check-circle{% endif %} me-2"></i>{{ message }}
+      </div>
+      {% endfor %}
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <!-- ── Araç Kimliği ── -->
+        <div class="form-kart">
+          <div class="form-kart-header"><i class="bi bi-car-front me-2 text-primary"></i>Araç Kimliği</div>
+          <div class="form-kart-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="search-field-label mb-1">Marka *</label>
+                <select name="marka" id="s_marka" required class="form-select">
+                  <option value="">Seçin...</option>
+                  {% for m in markalar %}<option{% if form_data.marka == m %} selected{% endif %}>{{ m }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="search-field-label mb-1">Seri</label>
+                <select name="seri" id="s_seri" class="form-select"><option value="">Önce marka seçin</option></select>
+              </div>
+              <div class="col-md-4">
+                <label class="search-field-label mb-1">Model *</label>
+                <select name="model" id="s_model" required class="form-select">
+                  <option value="">Önce seri seçin</option>
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="search-field-label mb-1">Kasa Tipi</label>
+                <select name="kasa_tipi" id="s_kasa_tipi" class="form-select">
+                  {% for k in kasa_list %}<option{% if form_data.kasa_tipi == k %} selected{% endif %}>{{ k }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="search-field-label mb-1">Renk</label>
+                <select name="renk" class="form-select cs-select">
+                  <option value="">Seçin...</option>
+                  {% for r in renk_list %}<option{% if form_data.renk == r %} selected{% endif %}>{{ r }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="search-field-label mb-1">Çekiş</label>
+                <select name="cekis" class="form-select cs-select">
+                  <option value="">Seçin...</option>
+                  {% for c in cekis_list %}<option{% if form_data.cekis == c %} selected{% endif %}>{{ c }}</option>{% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Teknik Özellikler ── -->
+        <div class="form-kart">
+          <div class="form-kart-header"><i class="bi bi-gear me-2 text-primary"></i>Teknik Özellikler</div>
+          <div class="form-kart-body">
+            <div class="row g-3">
+              <div class="col-md-3">
+                <label class="search-field-label mb-1">Vites *</label>
+                <select name="vites_tipi" required class="form-select cs-select">
+                  {% for v in vites_list %}<option{% if form_data.vites_tipi == v %} selected{% endif %}>{{ v }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="search-field-label mb-1">Yakıt *</label>
+                <select name="yakit_tipi" required class="form-select cs-select">
+                  {% for y in yakit_list %}<option{% if form_data.yakit_tipi == y %} selected{% endif %}>{{ y }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="search-field-label mb-1">Motor Hacmi</label>
+                <select name="motor_hacmi" class="form-select cs-select">
+                  <option value="">Seçin...</option>
+                  {% for m in motor_list %}<option value="{{ m }}"{% if form_data.motor_hacmi == m|stringformat:"s" %} selected{% endif %}>{{ m }} cc</option>{% endfor %}
+                </select>
+              </div>
+              <div class="col-md-3">
+                <label class="search-field-label mb-1">Motor Gücü (HP)</label>
+                <input type="number" name="motor_gucu" min="30" max="2000" placeholder="120" class="form-control"
+                       value="{{ form_data.motor_gucu|default:'' }}">
+              </div>
+              <div class="col-md-3">
+                <label class="search-field-label mb-1">Yıl *</label>
+                <input type="number" name="yil" required min="1950" max="2026" placeholder="2018" class="form-control"
+                       value="{{ form_data.yil|default:'' }}">
+              </div>
+              <div class="col-md-3">
+                <label class="search-field-label mb-1">Kilometre *</label>
+                <input type="number" name="kilometre" required min="0" max="1500000" placeholder="85000" class="form-control"
+                       value="{{ form_data.kilometre|default:'' }}">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Hasar ve Satıcı ── -->
+        <div class="form-kart">
+          <div class="form-kart-header"><i class="bi bi-shield-check me-2 text-primary"></i>Hasar ve Satıcı Bilgisi</div>
+          <div class="form-kart-body">
+            <div class="row g-3">
+              <div class="col-md-4">
+                <label class="search-field-label mb-1">Şehir *</label>
+                <select name="sehir" required class="form-select cs-select">
+                  <option value="">Seçin...</option>
+                  {% for s in sehirler %}<option{% if form_data.sehir == s %} selected{% endif %}>{{ s }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="col-md-4">
+                <label class="search-field-label mb-1">Kimden</label>
+                <select name="kimden" class="form-select cs-select">
+                  {% for k in kimden_list %}<option{% if form_data.kimden == k %} selected{% endif %}>{{ k }}</option>{% endfor %}
+                </select>
+              </div>
+              <div class="col-md-8">
+                <label class="search-field-label mb-1">Tramer Tutarı (TL)</label>
+                <div class="d-flex align-items-center gap-3">
+                  <input type="number" name="tramer_tutari" id="s_tramer_tutari" min="0" max="9999999"
+                         class="form-control" style="max-width:180px"
+                         value="{{ form_data.tramer_tutari|default:'0' }}" placeholder="0">
+                  <span id="tramer-badge"
+                        style="padding:4px 14px;border-radius:20px;font-size:.72rem;font-weight:700;background:#e2e8f0;color:#475569;white-space:nowrap">
+                    Bilinmiyor
+                  </span>
+                </div>
+                <div style="font-size:.72rem;color:var(--gray-400);margin-top:4px">
+                  0 TL = Yok &nbsp;·&nbsp; ≤5.000 TL = Düşük &nbsp;·&nbsp; ≤25.000 TL = Orta &nbsp;·&nbsp; >25.000 TL = Yüksek
+                </div>
+                <input type="hidden" name="tramer_kategori" id="s_tramer_kategori"
+                       value="{{ form_data.tramer_kategori|default:'bilinmiyor' }}">
+              </div>
+            </div>
+
+            <div class="mt-4">
+              <label class="search-field-label mb-2 d-block">
+                <i class="bi bi-car-front me-1 text-primary"></i>
+                Araç Hasar Şeması
+                <span style="font-weight:400;color:var(--gray-400)"> — panellere tıklayarak durumu işaretleyin</span>
+              </label>
+              {% include "listings/partials/_car_schema.html" with mode="edit" schema_id="satis" %}
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ── İlan Metni ── -->
+        <div class="form-kart">
+          <div class="form-kart-header"><i class="bi bi-tag me-2 text-primary"></i>İlan Başlığı, Fiyat ve Açıklama</div>
+          <div class="form-kart-body">
+            <div class="row g-3">
+              <div class="col-12">
+                <label class="search-field-label mb-1">Başlık *</label>
+                <input type="text" name="baslik" required maxlength="200"
+                       placeholder="Örn: Hasarsız Boyasız Orjinal — Temiz" class="form-control"
+                       value="{{ form_data.baslik|default:'' }}">
+              </div>
+              <div class="col-md-6">
+                <label class="search-field-label mb-1">Fiyat (TL) *</label>
+                <input type="number" name="fiyat" required min="1" placeholder="850000" class="form-control"
+                       value="{{ form_data.fiyat|default:'' }}">
+              </div>
+              <div class="col-12">
+                <label class="search-field-label mb-1">Açıklama</label>
+                <textarea name="aciklama" rows="5"
+                          placeholder="Araç hakkında detaylı bilgi verin..." class="form-control">{{ form_data.aciklama|default:'' }}</textarea>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Fotoğraflar ── -->
+        <div class="form-kart">
+          <div class="form-kart-header"><i class="bi bi-images me-2 text-primary"></i>Fotoğraflar</div>
+          <div class="form-kart-body">
+            <input type="file" name="fotolar" id="foto-input" multiple accept="image/*" style="display:none">
+            <div id="drop-zone"
+                 style="border:2px dashed var(--gray-200);border-radius:12px;padding:2.5rem 1.5rem;text-align:center;cursor:pointer;transition:var(--t);background:var(--gray-50)"
+                 onclick="document.getElementById('foto-input').click()"
+                 ondragover="fotoDropOver(event)" ondragleave="fotoDropLeave(event)" ondrop="fotoDrop(event)">
+              <i class="bi bi-cloud-arrow-up" style="font-size:2rem;color:var(--gray-300)"></i>
+              <p style="margin:.5rem 0 .25rem;font-weight:600;color:var(--navy);font-size:.9rem">Fotoğraf yüklemek için tıklayın veya sürükleyin</p>
+              <p style="margin:0;font-size:.78rem;color:var(--gray-400)">JPG, PNG — max 10 MB/dosya · İlk fotoğraf kapak olur</p>
+            </div>
+            <div id="foto-zorunlu-uyari" style="display:none;font-size:.78rem;color:#ef4444;margin-top:.5rem">
+              <i class="bi bi-exclamation-triangle me-1"></i>En az bir fotoğraf yüklemeniz zorunludur.
+            </div>
+            <div id="foto-preview" style="display:none;margin-top:1rem">
+              <div style="font-size:.78rem;font-weight:600;color:var(--navy);margin-bottom:.5rem">
+                <i class="bi bi-check-circle-fill text-success me-1"></i><span id="foto-count">0</span> fotoğraf seçildi
+              </div>
+              <div id="foto-grid" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:.5rem"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="d-flex gap-3 justify-content-end">
+          <a href="{% url 'listings:arabalar' %}" class="btn-outline-p">İptal</a>
+          <button type="submit" class="btn-primary-p"><i class="bi bi-send me-1"></i>İlanı Gönder</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+window.SATIS_CFG = {
+  msMap:     {{ marka_seri_json|safe }},
+  msmMap:    {{ marka_seri_model_json|safe }},
+  msmkMap:   {{ marka_seri_model_kasa_json|safe }},
+  tumKasa:   {{ kasa_tipleri_json|safe }},
+  formMarka: '{% if form_data.marka %}{{ form_data.marka|escapejs }}{% endif %}',
+  formSeri:  '{% if form_data.seri %}{{ form_data.seri|escapejs }}{% endif %}',
+  formModel: '{% if form_data.model %}{{ form_data.model|escapejs }}{% endif %}',
+  formKasa:  '{% if form_data.kasa_tipi %}{{ form_data.kasa_tipi|escapejs }}{% endif %}'
+};
+</script>
+<script src="{% static 'listings/js/satis.js' %}"></script>
+{% endblock %}

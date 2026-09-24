@@ -1,0 +1,149 @@
+{
+  "feature_names": [
+    "marka",
+    "model",
+    "kilometre",
+    "motor_hacmi",
+    "motor_gucu",
+    "tramer",
+    "boyali_sayisi",
+    "degisen_sayisi",
+    "tramer_bilinmiyor",
+    "sehir",
+    "ilan_yil",
+    "ilan_ay",
+    "yas",
+    "km_per_year",
+    "motor_verimlilik",
+    "hasar_skoru",
+    "log_km",
+    "motor_gucu_sq",
+    "vites_tipi_Otomatik",
+    "vites_tipi_Yarı Otomatik",
+    "yakit_tipi_Dizel",
+    "yakit_tipi_Elektrik",
+    "yakit_tipi_Hibrit",
+    "yakit_tipi_LPG & Benzin",
+    "kasa_tipi_Cabrio",
+    "kasa_tipi_Coupe",
+    "kasa_tipi_Hatchback/3",
+    "kasa_tipi_Hatchback/5",
+    "kasa_tipi_MPV",
+    "kasa_tipi_Pick-up",
+    "kasa_tipi_Roadster",
+    "kasa_tipi_SUV",
+    "kasa_tipi_Sedan",
+    "kasa_tipi_Station wagon",
+    "renk_Beyaz",
+    "renk_Bordo",
+    "renk_Diger",
+    "renk_Füme",
+    "renk_Gri",
+    "renk_Kahverengi",
+    "renk_Kırmızı",
+    "renk_Lacivert",
+    "renk_Mavi",
+    "renk_Siyah",
+    "renk_Yeşil",
+    "renk_Şampanya",
+    "cekis_AWD (Elektronik)",
+    "cekis_Arkadan İtiş",
+    "cekis_Önden Çekiş",
+    "kimden_Sahibinden",
+    "kimden_Yetkili Bayiden",
+    "tramer_kategori_dusuk",
+    "tramer_kategori_orta",
+    "tramer_kategori_yok",
+    "tramer_kategori_yuksek"
+  ],
+  "n_features": 55,
+  "encoding": {
+    "low_cardinality_columns": [
+      "vites_tipi",
+      "yakit_tipi",
+      "kasa_tipi",
+      "renk",
+      "cekis",
+      "kimden",
+      "tramer_kategori"
+    ],
+    "high_cardinality_columns": [
+      "marka",
+      "model",
+      "sehir"
+    ],
+    "one_hot_encoding": {
+      "vites_tipi": [
+        "vites_tipi_Otomatik",
+        "vites_tipi_Yarı Otomatik"
+      ],
+      "yakit_tipi": [
+        "yakit_tipi_Dizel",
+        "yakit_tipi_Elektrik",
+        "yakit_tipi_Hibrit",
+        "yakit_tipi_LPG & Benzin"
+      ],
+      "kasa_tipi": [
+        "kasa_tipi_Cabrio",
+        "kasa_tipi_Coupe",
+        "kasa_tipi_Hatchback/3",
+        "kasa_tipi_Hatchback/5",
+        "kasa_tipi_MPV",
+        "kasa_tipi_Pick-up",
+        "kasa_tipi_Roadster",
+        "kasa_tipi_SUV",
+        "kasa_tipi_Sedan",
+        "kasa_tipi_Station wagon"
+      ],
+      "renk": [
+        "renk_Beyaz",
+        "renk_Bordo",
+        "renk_Diger",
+        "renk_Füme",
+        "renk_Gri",
+        "renk_Kahverengi",
+        "renk_Kırmızı",
+        "renk_Lacivert",
+        "renk_Mavi",
+        "renk_Siyah",
+        "renk_Yeşil",
+        "renk_Şampanya"
+      ],
+      "cekis": [
+        "cekis_AWD (Elektronik)",
+        "cekis_Arkadan İtiş",
+        "cekis_Önden Çekiş"
+      ],
+      "kimden": [
+        "kimden_Sahibinden",
+        "kimden_Yetkili Bayiden"
+      ],
+      "tramer_kategori": [
+        "tramer_kategori_dusuk",
+        "tramer_kategori_orta",
+        "tramer_kategori_yok",
+        "tramer_kategori_yuksek"
+      ]
+    },
+    "target_encoding_cols": [
+      "marka",
+      "model",
+      "sehir"
+    ]
+  },
+  "engineered_features": [
+    "km_per_year",
+    "motor_verimlilik",
+    "hasar_skoru",
+    "log_km",
+    "motor_gucu_sq"
+  ],
+  "target_transform": {
+    "method": "log1p",
+    "description": "np.log1p(fiyat) ile dönüştürülmüş, tahmin için np.expm1() ile geri döndürülür",
+    "min_original": 51000.0,
+    "max_original": 2999000.0,
+    "min_log": 10.839600519357369,
+    "max_log": 14.913789791175573
+  }
+}

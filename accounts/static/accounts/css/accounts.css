@@ -1,0 +1,92 @@
+/* ══════════════════════════════════════════════════════════════
+   ACCOUNTS APP — Giriş, Kayıt, Profil, Şifre Sıfırlama
+   accounts/static/accounts/css/accounts.css
+   ══════════════════════════════════════════════════════════════ */
+
+.auth-wrapper { min-height: 100vh; display: flex; }
+.auth-left {
+  flex: 0 0 44%;
+  background:
+    linear-gradient(155deg, rgba(4,3,8,.92) 0%, rgba(10,8,16,.88) 60%, rgba(5,5,12,.94) 100%),
+    url('https://images.pexels.com/photos/3729464/pexels-photo-3729464.jpeg?auto=compress&cs=tinysrgb&w=1200')
+    center / cover no-repeat;
+  display: flex; align-items: flex-end;
+  padding: 3rem;
+  position: relative; overflow: hidden;
+}
+.auth-left::before {
+  content: '';
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(232,152,12,.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(232,152,12,.03) 1px, transparent 1px);
+  background-size: 50px 50px; pointer-events: none;
+}
+.auth-right {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  padding: 3rem 2rem;
+  background: var(--gray-50);
+}
+.auth-card {
+  background: var(--steel);
+  border: 1px solid var(--wire);
+  border-radius: var(--radius-lg);
+  padding: 2.5rem;
+  box-shadow: var(--shadow);
+  width: 100%; max-width: 420px;
+}
+[data-theme="light"] .auth-card    { background: #fff; }
+[data-theme="dark"]  .auth-right   { background: var(--carbon); }
+.auth-input-wrap {
+  border: 1px solid var(--wire);
+  border-radius: var(--radius-sm);
+  display: flex; align-items: center;
+  overflow: hidden; transition: var(--t);
+  background: var(--chassis);
+}
+[data-theme="light"] .auth-input-wrap { background: #fff; border-color: var(--wire); }
+.auth-input-wrap:focus-within {
+  border-color: var(--amber-border);
+  box-shadow: 0 0 0 3px var(--amber-dim);
+}
+.auth-input-icon {
+  padding: 0 12px; color: var(--mist); font-size: 1rem;
+  background: var(--steel); border-right: 1px solid var(--wire);
+  height: 100%; display: flex; align-items: center; align-self: stretch;
+}
+[data-theme="light"] .auth-input-icon { background: var(--carbon); }
+.auth-input-wrap input {
+  border: none; outline: none;
+  padding: 11px 14px; font-size: .9rem;
+  font-family: 'Barlow', sans-serif; color: var(--navy);
+  flex: 1; background: transparent;
+}
+.auth-input-wrap input::placeholder { color: var(--mist); }
+.btn-toggle-pass {
+  border: none; background: transparent;
+  padding: 0 12px; color: var(--mist);
+  cursor: pointer; font-size: 1rem; height: 100%;
+  display: flex; align-items: center; align-self: stretch;
+  transition: var(--t);
+}
+.btn-toggle-pass:hover { color: var(--navy); }
+
+/* Dark mode overrides — accounts specific */
+[data-theme="dark"] .auth-input-wrap {
+  background: var(--chassis) !important;
+  border-color: var(--border) !important;
+}
+[data-theme="dark"] .auth-input-icon {
+  background: var(--steel) !important;
+  border-color: var(--border) !important;
+  color: var(--gray-400) !important;
+}
+[data-theme="dark"] .auth-input-wrap input { background: transparent !important; color: var(--navy) !important; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .auth-left  { display: none; }
+  .auth-right { padding: 2rem 1rem; }
+  .auth-card  { padding: 1.75rem 1.25rem; }
+}
